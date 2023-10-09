@@ -74,7 +74,7 @@ namespace test_blazor.Server.Controllers
         private async Task<object> CheckToken()
         {
             string accessToken = HttpContext.Request.Headers["Authorization"];
-            var checktoken = await _ConvertJwt.ConvertString(accessToken);
+            var checktoken = _ConvertJwt.ConvertString(accessToken);
             return checktoken;
         }
     }

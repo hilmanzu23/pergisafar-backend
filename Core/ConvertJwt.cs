@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 
 public class ConvertJWT
 {
-    public async Task<object> ConvertString(string accessToken)
+    public object ConvertString(string accessToken)
     {
         try
         {
