@@ -33,7 +33,7 @@ namespace test_blazor.Server.Controllers
             }
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpPost]
         [Route("auth/register")]
         public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterCustomer login)

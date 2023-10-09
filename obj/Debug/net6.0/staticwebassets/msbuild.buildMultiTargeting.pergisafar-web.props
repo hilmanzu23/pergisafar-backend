@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\pergisafar-web.props" />
+</Project>
