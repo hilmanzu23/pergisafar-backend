@@ -9,15 +9,34 @@ namespace pergisafar.Shared.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public ObjectId? Id { get; set; }
-        public string? IdRole { get; set; }
+
+        [BsonElement("IdRole")]
+        public ObjectId? IdRole { get; set; }
+
+        [BsonElement("Email")]
         public string? Email { get; set; }
+
+        [BsonElement("Password")]
         public string? Password { get; set; }
+        [BsonElement("FullName")]
         public string? FullName { get; set; }
+
+        [BsonElement("PhoneNumber")]
         public int? PhoneNumber { get; set; }
+
+        [BsonElement("Balance")]
         public decimal? Balance { get; set; }
+
+        [BsonElement("Point")]
         public decimal? Point { get; set; }
+
+        [BsonElement("Photo")]
         public string? Photo { get; set; }
+
+        [BsonElement("PhotoKtp")]
         public string? PhotoKtp { get; set; }
+
+        [BsonElement("PhotoKk")]
         public string? PhotoKk { get; set; }
     }
 }

@@ -11,7 +11,7 @@ public class ConvertJWT
             var token = tokenHandler.ReadJwtToken(tokenAccess);
             if (token.ValidTo >= DateTime.UtcNow)
             {
-                return true;
+                return new { message = "Masih Berlaku" };
             }
             else
             {

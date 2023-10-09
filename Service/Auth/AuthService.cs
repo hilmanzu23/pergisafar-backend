@@ -7,40 +7,41 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using MongoDB.Bson;
-using Microsoft.Extensions.Options;
-using MongoExample.Models;
-using BCrypt.Net;
+using System.Text;
 
 namespace RepositoryPattern.Services.AuthService
 {
     public class AuthService : IAuthService
     {
-        private readonly IConfiguration _configuration;
         private readonly IMongoCollection<User> dataUser;
+        private readonly string key;
 
-        public AuthService(IConfiguration configuration, IOptions<MongoDBSettings> mongoDBSettings)
+        public AuthService(IConfiguration configuration)
         {
-            _configuration = configuration;
-            MongoClient client = new MongoClient(mongoDBSettings.Value.ConnectionURI);
-            IMongoDatabase database = client.GetDatabase(mongoDBSettings.Value.DatabaseName);
+            MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
+            IMongoDatabase database = client.GetDatabase("testprod");
             dataUser = database.GetCollection<User>("users");
+            // var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            this.key = configuration.GetSection("AppSettings")["JwtKey"];
         }
 
-        private string CreateJWT(UserForm? user)
+        public string Authenticate(UserForm login)
         {
-            var secretkey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("Mx0K7BAwAk+YXsKErRDtbTAeEpZEdHcSeKO15Snw/RaKd+Dnfb3XfX60F4AQHaG1")); // NOTE: SAME KEY AS USED IN Program.cs FILE
-            var credentials = new SigningCredentials(secretkey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[] // NOTE: could also use List<Claim> here
-			{
-                new Claim(ClaimTypes.Name, user.Email), // NOTE: this will be the "User.Identity.Name" value
-				new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, user.Email) // NOTE: this could a unique ID assigned to the user by a database
-			};
-
-            var token = new JwtSecurityToken(issuer: "pergisafar.com", audience: "pergisafar.com", claims: claims, expires: DateTime.Now.AddMinutes(1), signingCredentials: credentials);
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var keys = Encoding.ASCII.GetBytes(key);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new(ClaimTypes.Email, login.Email)
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keys), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = "pergisafar.com",
+                Audience = "pergisafar.com"
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
 
         public async Task<Object> LoginAsync([FromBody] UserForm login)
@@ -66,7 +67,7 @@ namespace RepositoryPattern.Services.AuthService
                 {
                     throw new Exception("Email atau Password Salah");
                 }
-                string token = CreateJWT(login);
+                string token = Authenticate(login);
                 string idAsString = user.Id.ToString();
                 return new { id = idAsString, accessToken = token };
             }
