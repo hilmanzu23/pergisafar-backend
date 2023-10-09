@@ -71,9 +71,13 @@ namespace RepositoryPattern.Services.AuthService
                 {
                     throw new Exception("Akun anda tidak perbolehkan akses");
                 }
+                if (user.IsVerification == false)
+                {
+                    throw new Exception("Akun anda belum aktif, silahkan aktifasi melalui link kami kirimkan di email anda");
+                }
                 string token = Authenticate(login);
                 string idAsString = user.Id.ToString();
-                return new { id = idAsString, accessToken = token };
+                return new { success = true,id = idAsString, accessToken = token };
             }
             catch (Exception ex)
             {
@@ -118,7 +122,7 @@ namespace RepositoryPattern.Services.AuthService
 
                 await dataUser.InsertOneAsync(roleData);
                 string roleIdAsString = roleData.Id.ToString();
-                return new { message = "pendaftaran berhasil silahkan cek email untuk melakukan aktifasi", id = roleIdAsString };
+                return new { success = true,message = "pendaftaran berhasil silahkan cek email untuk melakukan aktifasi", id = roleIdAsString };
             }
             catch (Exception ex)
             {
@@ -150,6 +154,19 @@ namespace RepositoryPattern.Services.AuthService
             {
                 return false;
             }
+        }
+
+        public async Task<object> Aktifasi(string id)
+        {
+            ObjectId objectId = ObjectId.Parse(id);;
+            var roleData = await dataUser.Find(x => x.Id == objectId).FirstOrDefaultAsync();
+            if (roleData == null)
+            {
+                return new { success = false, errorMessage = "Data not found" };
+            }
+            roleData.IsVerification = true;
+            await dataUser.ReplaceOneAsync(x => x.Id == objectId, roleData);
+            return new { success = true, id = roleData.Id.ToString() };
         }
     }
 }

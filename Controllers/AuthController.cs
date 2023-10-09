@@ -50,10 +50,25 @@ namespace test_blazor.Server.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("auth/aktifasi/{id}")]
+        public async Task<object> VerifySeasonsAsync([FromRoute]string id)
+        {
+            try
+            {
+                var dataList = await _IAuthService.Aktifasi(id);
+                return Ok(dataList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [Authorize]
         [HttpGet]
         [Route("auth/verify")]
-        public object VerifySeasons()
+        public object Aktifasi()
         {
             try
             {
