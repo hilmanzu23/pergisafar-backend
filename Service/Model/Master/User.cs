@@ -22,7 +22,7 @@ namespace pergisafar.Shared.Models
         public string? FullName { get; set; }
 
         [BsonElement("PhoneNumber")]
-        public int? PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         [BsonElement("Balance")]
         public decimal? Balance { get; set; }

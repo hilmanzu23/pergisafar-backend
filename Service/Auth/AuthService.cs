@@ -67,6 +67,10 @@ namespace RepositoryPattern.Services.AuthService
                 {
                     throw new Exception("Email atau Password Salah");
                 }
+                if (user.IsActive == false)
+                {
+                    throw new Exception("Akun anda tidak perbolehkan akses");
+                }
                 string token = Authenticate(login);
                 string idAsString = user.Id.ToString();
                 return new { id = idAsString, accessToken = token };
@@ -108,7 +112,7 @@ namespace RepositoryPattern.Services.AuthService
                     IsVerification = false,
                     Balance = 0,
                     Point = 0,
-                    PhoneNumber = 0,
+                    PhoneNumber = "",
                     CreatedAt = DateTime.Now
                 };
 

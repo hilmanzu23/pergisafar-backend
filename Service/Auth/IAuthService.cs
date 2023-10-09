@@ -1,7 +1,4 @@
 
-using pergisafar.Shared.Models;
-using pergisafar.Shared.Helper;
-using Sieve.Models;
 using static RepositoryPattern.Services.AuthService.AuthService;
 
 public interface IAuthService

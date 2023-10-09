@@ -53,7 +53,7 @@ namespace test_blazor.Server.Controllers
         [Authorize]
         [HttpGet]
         [Route("auth/verify")]
-        public async Task<Object> VerifySeasonsAsync()
+        public object VerifySeasons()
         {
             try
             {
@@ -62,7 +62,7 @@ namespace test_blazor.Server.Controllers
                 {
                     return Unauthorized();
                 }
-                var cek = await CheckToken();
+                var cek = CheckToken();
                 return cek;
             }
             catch (Exception ex)
@@ -71,7 +71,7 @@ namespace test_blazor.Server.Controllers
             }
         }
 
-        private async Task<object> CheckToken()
+        private object CheckToken()
         {
             string accessToken = HttpContext.Request.Headers["Authorization"];
             var checktoken = _ConvertJwt.ConvertString(accessToken);
