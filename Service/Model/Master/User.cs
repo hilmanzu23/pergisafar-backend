@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 namespace pergisafar.Shared.Models
@@ -23,6 +21,9 @@ namespace pergisafar.Shared.Models
 
         [BsonElement("PhoneNumber")]
         public string? PhoneNumber { get; set; }
+
+        [BsonElement("Pin")]
+        public string? Pin { get; set; }
 
         [BsonElement("Balance")]
         public decimal? Balance { get; set; }

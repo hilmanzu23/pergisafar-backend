@@ -117,6 +117,7 @@ namespace RepositoryPattern.Services.AuthService
                     Balance = 0,
                     Point = 0,
                     PhoneNumber = "",
+                    Pin = "",
                     CreatedAt = DateTime.Now
                 };
 

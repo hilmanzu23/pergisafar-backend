@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using System.Text;
 using RepositoryPattern.Services.AuthService;
 using RepositoryPattern.Services.UserService;
+using RepositoryPattern.Services.RoleService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IDatabaseSettings>(db => db.GetRequiredService<IOptions<DatabaseSettings>>().Value);
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+
 builder.Services.AddScoped<ConvertJWT>();
 
 builder.Services.AddAuthentication(options =>
