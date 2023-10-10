@@ -7,6 +7,7 @@ using System.Text;
 using RepositoryPattern.Services.AuthService;
 using RepositoryPattern.Services.UserService;
 using RepositoryPattern.Services.RoleService;
+using RepositoryPattern.Services.SettingService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,8 @@ builder.Services.AddSingleton<IDatabaseSettings>(db => db.GetRequiredService<IOp
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<ISettingService, SettingService>();
+
 
 builder.Services.AddScoped<ConvertJWT>();
 
