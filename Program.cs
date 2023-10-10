@@ -8,6 +8,7 @@ using RepositoryPattern.Services.AuthService;
 using RepositoryPattern.Services.UserService;
 using RepositoryPattern.Services.RoleService;
 using RepositoryPattern.Services.SettingService;
+using SendingEmail;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,7 @@ builder.Services.AddSingleton<IDatabaseSettings>(db => db.GetRequiredService<IOp
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
 
 
