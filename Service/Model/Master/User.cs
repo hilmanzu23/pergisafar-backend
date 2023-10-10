@@ -5,11 +5,10 @@ namespace pergisafar.Shared.Models
     public class User : BaseModel
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public ObjectId? Id { get; set; }
+        public string? Id { get; set; }
 
         [BsonElement("IdRole")]
-        public ObjectId? IdRole { get; set; }
+        public string? IdRole { get; set; }
 
         [BsonElement("Email")]
         public string? Email { get; set; }
@@ -36,6 +35,9 @@ namespace pergisafar.Shared.Models
 
         [BsonElement("PhotoKtp")]
         public string? PhotoKtp { get; set; }
+
+        [BsonElement("Partner")]
+        public string? Partner { get; set; }
 
         [BsonElement("PhotoKk")]
         public string? PhotoKk { get; set; }

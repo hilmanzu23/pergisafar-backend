@@ -34,7 +34,7 @@ namespace RepositoryPattern.Services.RoleService
             }
             var roleData = new Role()
                 {
-                    Id = ObjectId.GenerateNewId(),
+                    Id = Guid.NewGuid().ToString(),
                     Name = item.Name,
                     IsActive = true,
                     IsVerification = false,
@@ -46,26 +46,26 @@ namespace RepositoryPattern.Services.RoleService
 
         public async Task<object> Put(string id, Role item)
         {
-            ObjectId objectId = ObjectId.Parse(id);;
-            var roleData = await dataUser.Find(x => x.Id == objectId).FirstOrDefaultAsync();
+            ;
+            var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
             if (roleData == null)
             {
                 return new { success = false, errorMessage = "Data not found" };
             }
             roleData.Name = item.Name;
-            await dataUser.ReplaceOneAsync(x => x.Id == objectId, roleData);
+            await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
             return new { success = true, id = roleData.Id.ToString() };
         }
         public async Task<object> Delete(string id)
         {
-            ObjectId objectId = ObjectId.Parse(id);
-            var roleData = await dataUser.Find(x => x.Id == objectId).FirstOrDefaultAsync();
+            
+            var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
             if (roleData == null)
             {
                 return new { success = false, errorMessage = "Data not found" };
             }
             roleData.IsActive = true;
-            await dataUser.ReplaceOneAsync(x => x.Id == objectId, roleData);
+            await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
             return new { success = true, id = roleData.Id.ToString() };
         }
 

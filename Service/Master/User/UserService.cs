@@ -26,8 +26,7 @@ namespace RepositoryPattern.Services.UserService
 
         public async Task<object> Put(string id, User item)
         {
-            ObjectId objectId = ObjectId.Parse(id);;
-            var roleData = await dataUser.Find(x => x.Id == objectId).FirstOrDefaultAsync();
+            var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
             if (roleData == null)
             {
                 return new { success = false, errorMessage = "Data not found" };
@@ -35,19 +34,18 @@ namespace RepositoryPattern.Services.UserService
             roleData.FullName = item.FullName;
             roleData.PhoneNumber = item.PhoneNumber;
             roleData.Balance = item.Balance;
-            await dataUser.ReplaceOneAsync(x => x.Id == objectId, roleData);
+            await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
             return new { success = true, id = roleData.Id.ToString() };
         }
         public async Task<object> Delete(string id)
         {
-            ObjectId objectId = ObjectId.Parse(id);
-            var roleData = await dataUser.Find(x => x.Id == objectId).FirstOrDefaultAsync();
+            var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
             if (roleData == null)
             {
                 return new { success = false, errorMessage = "Data not found" };
             }
             roleData.IsActive = true;
-            await dataUser.ReplaceOneAsync(x => x.Id == objectId, roleData);
+            await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
             return new { success = true, id = roleData.Id.ToString() };
         }
     }

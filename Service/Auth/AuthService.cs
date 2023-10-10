@@ -109,7 +109,7 @@ namespace RepositoryPattern.Services.AuthService
 
                 var roleData = new User()
                 {
-                    Id = ObjectId.GenerateNewId(),
+                    Id = Guid.NewGuid().ToString(),
                     Email = data.Email,
                     Password = hashedPassword,
                     IsActive = true,
@@ -118,6 +118,7 @@ namespace RepositoryPattern.Services.AuthService
                     Point = 0,
                     PhoneNumber = "",
                     Pin = "",
+                    IdRole = "ebe6b5b1-71f5-4872-b0ca-408184372153",
                     CreatedAt = DateTime.Now
                 };
 
@@ -159,14 +160,13 @@ namespace RepositoryPattern.Services.AuthService
 
         public async Task<object> Aktifasi(string id)
         {
-            ObjectId objectId = ObjectId.Parse(id);;
-            var roleData = await dataUser.Find(x => x.Id == objectId).FirstOrDefaultAsync();
+            var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
             if (roleData == null)
             {
                 return new { success = false, errorMessage = "Data not found" };
             }
             roleData.IsVerification = true;
-            await dataUser.ReplaceOneAsync(x => x.Id == objectId, roleData);
+            await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
             return new { success = true, id = roleData.Id.ToString() };
         }
     }
