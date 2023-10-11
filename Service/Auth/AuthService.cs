@@ -28,7 +28,7 @@ namespace RepositoryPattern.Services.AuthService
             _emailService = emailService;
         }
 
-        public string Authenticate(UserForm login)
+        public string Authenticate(UserForm login, string? id)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var keys = Encoding.ASCII.GetBytes(key);
@@ -36,12 +36,13 @@ namespace RepositoryPattern.Services.AuthService
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new(ClaimTypes.Email, login.Email)
+                    new(ClaimTypes.Email, login.Email),
+                    new(ClaimTypes.NameIdentifier, id)
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keys), SecurityAlgorithms.HmacSha256Signature),
                 Issuer = "pergisafar.com",
-                Audience = "pergisafar.com"
+                Audience = "pergisafar.com",
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
@@ -78,9 +79,9 @@ namespace RepositoryPattern.Services.AuthService
                 {
                     throw new Exception("Akun anda belum aktif, silahkan aktifasi melalui link kami kirimkan di email anda");
                 }
-                string token = Authenticate(login);
+                string token = Authenticate(login, user.Id);
                 string idAsString = user.Id.ToString();
-                return new { success = true,id = idAsString, accessToken = token };
+                return new { success = true, id = idAsString, accessToken = token };
             }
             catch (Exception ex)
             {
@@ -132,19 +133,77 @@ namespace RepositoryPattern.Services.AuthService
                 {
                     Email = data.Email,
                     Subject = "Aktifasi Travel Berkah",
-                    Message = $"Pendaftaran Berhasil silahkan klik link ini untuk verifikasi https://localhost:7083/auth/aktifasi/{ roleIdAsString }"
+                    Message = $"Pendaftaran Berhasil silahkan klik link ini untuk verifikasi https://localhost:7083/auth/aktifasi/{roleIdAsString}"
                 };
                 var sending = _emailService.SendingEmail(email);
-                return new { 
+                return new
+                {
                     success = true,
                     message = "pendaftaran berhasil silahkan cek email untuk melakukan aktifasi",
-                    id = roleIdAsString 
+                    id = roleIdAsString
                 };
             }
             catch (Exception ex)
             {
                 return new { Error = ex.Message };
             }
+        }
+
+        public async Task<object> UpdatePassword(string id, UpdatePasswordForm item)
+        {
+            var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
+            if (roleData == null)
+            {
+                return new { success = false, errorMessage = "Data not found" };
+            }
+            if (item.Password.Length < 8)
+            {
+                throw new Exception("Password harus 8 karakter");
+            }
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(item.Password);
+            roleData.Password = hashedPassword;
+            await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
+            return new { success = true, id = roleData.Id.ToString() };
+        }
+
+        public async Task<object> RequestOtpEmail(string id)
+        {
+            var roleData = await dataUser.Find(x => x.Email == id).FirstOrDefaultAsync();
+            if (roleData == null)
+            {
+                return new { success = false, errorMessage = "Data not found" };
+            }
+            Random random = new Random();
+            string otp = random.Next(10000, 99999).ToString();
+            var email = new EmailForm()
+            {
+                Email = roleData.Email,
+                Subject = "Request OTP",
+                Message = $"Berikut adalah OTP anda /br {otp}"
+            };
+            var sending = _emailService.SendingEmail(email);
+            roleData.Otp = otp;
+            await dataUser.ReplaceOneAsync(x => x.Email == id, roleData);
+            return new { success = true, id = roleData.Id.ToString() };
+        }
+
+        public async Task<object> VerifyOtp(string id, OtpForm otp)
+        {
+            var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
+            if (roleData == null)
+            {
+                return new { success = false, errorMessage = "Data not found" };
+            }
+            if (roleData.Otp != otp.Otp)
+            {
+                return new { success = false, errorMessage = "Wrong Otp" };
+            }
+            var data = new UserForm();
+            {
+                data.Email = roleData.Email;
+            }
+            string token = Authenticate(data, roleData.Id);
+            return new { success = true, id = roleData.Id.ToString(), accessToken = token };
         }
 
         public class UserForm
@@ -158,6 +217,19 @@ namespace RepositoryPattern.Services.AuthService
             public string? Email { get; set; }
             public string? FullName { get; set; }
             public string? Password { get; set; }
+        }
+
+        public class UpdatePasswordForm
+        {
+            public string? Password { get; set; }
+            public string? ConfirmPassword { get; set; }
+
+        }
+
+        public class OtpForm
+        {
+            public string? Otp { get; set; }
+
         }
 
         private bool IsValidEmail(string email)

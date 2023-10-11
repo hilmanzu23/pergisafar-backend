@@ -50,9 +50,61 @@ namespace test_blazor.Server.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost]
+        [Route("auth/updatepassword/{id}")]
+        public async Task<object> UpdatePassword([FromRoute] string id, [FromBody] UpdatePasswordForm item)
+        {
+            try
+            {
+                if (item.Password != item.ConfirmPassword)
+                {
+                    return new { success = false, errorMessage = "Password tidak sama" };
+                }
+                var dataList = await _IAuthService.UpdatePassword(id, item);
+                return Ok(dataList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("auth/verifyOtp/{id}")]
+        public async Task<object> VerifyOtp([FromRoute] string id, [FromBody] OtpForm otp)
+        {
+            try
+            {
+                var dataList = await _IAuthService.VerifyOtp(id, otp);
+                return Ok(dataList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("auth/requestOtpEmail/{email}")]
+        public async Task<object> RequestOtp([FromRoute] string email)
+        {
+            try
+            {
+                var dataList = await _IAuthService.RequestOtpEmail(email);
+                return Ok(dataList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet]
         [Route("auth/aktifasi/{id}")]
-        public async Task<object> VerifySeasonsAsync([FromRoute]string id)
+        public async Task<object> VerifySeasonsAsync([FromRoute] string id)
         {
             try
             {

@@ -21,6 +21,9 @@ namespace pergisafar.Shared.Models
         [BsonElement("PhoneNumber")]
         public string? PhoneNumber { get; set; }
 
+        [BsonElement("Otp")]
+        public string? Otp { get; set; }
+
         [BsonElement("Pin")]
         public string? Pin { get; set; }
 
