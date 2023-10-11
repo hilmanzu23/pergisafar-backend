@@ -130,15 +130,14 @@ namespace RepositoryPattern.Services.AuthService
 
                 var email = new EmailForm()
                 {
-                    Email = "hilmanzutech@gmail.com",
-                    Subject = "test",
+                    Email = data.Email,
+                    Subject = "Aktifasi Travel Berkah",
                     Message = $"Pendaftaran Berhasil silahkan klik link ini untuk verifikasi https://localhost:7083/auth/aktifasi/{ roleIdAsString }"
                 };
                 var sending = _emailService.SendingEmail(email);
                 return new { 
                     success = true,
                     message = "pendaftaran berhasil silahkan cek email untuk melakukan aktifasi",
-                    result = sending,
                     id = roleIdAsString 
                 };
             }
