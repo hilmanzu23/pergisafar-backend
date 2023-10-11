@@ -36,8 +36,8 @@ namespace RepositoryPattern.Services.AuthService
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new(ClaimTypes.Email, login.Email),
-                    new(ClaimTypes.NameIdentifier, id)
+                    new Claim(ClaimTypes.Name, id), // NOTE: this will be the "User.Identity.Name" value
+                    new Claim(JwtRegisteredClaimNames.Sub, id),
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keys), SecurityAlgorithms.HmacSha256Signature),

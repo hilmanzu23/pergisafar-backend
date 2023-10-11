@@ -52,16 +52,18 @@ namespace test_blazor.Server.Controllers
 
         [Authorize]
         [HttpPost]
-        [Route("auth/updatepassword/{id}")]
-        public async Task<object> UpdatePassword([FromRoute] string id, [FromBody] UpdatePasswordForm item)
+        [Route("auth/updatepassword")]
+        public async Task<object> UpdatePassword([FromBody] UpdatePasswordForm item)
         {
             try
             {
+                string accessToken = HttpContext.Request.Headers["Authorization"];
+                string idUser = await _ConvertJwt.ConvertString(accessToken);
                 if (item.Password != item.ConfirmPassword)
                 {
                     return new { success = false, errorMessage = "Password tidak sama" };
                 }
-                var dataList = await _IAuthService.UpdatePassword(id, item);
+                var dataList = await _IAuthService.UpdatePassword(idUser, item);
                 return Ok(dataList);
             }
             catch (Exception ex)
@@ -102,6 +104,7 @@ namespace test_blazor.Server.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("auth/aktifasi/{id}")]
         public async Task<object> VerifySeasonsAsync([FromRoute] string id)
@@ -129,20 +132,12 @@ namespace test_blazor.Server.Controllers
                 {
                     return Unauthorized();
                 }
-                var cek = CheckToken();
-                return cek;
+                return new { success = true, message = "Masih Berlaku" };
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
-        }
-
-        private object CheckToken()
-        {
-            string accessToken = HttpContext.Request.Headers["Authorization"];
-            var checktoken = _ConvertJwt.ConvertString(accessToken);
-            return checktoken;
         }
     }
 

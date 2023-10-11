@@ -101,3 +101,5 @@ E:\Dev\pergisafar-backend\obj\Debug\net6.0\refint\pergisafar-web.dll
 E:\Dev\pergisafar-backend\obj\Debug\net6.0\pergisafar-web.pdb
 E:\Dev\pergisafar-backend\obj\Debug\net6.0\pergisafar-web.genruntimeconfig.cache
 E:\Dev\pergisafar-backend\obj\Debug\net6.0\ref\pergisafar-web.dll
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Debug\net6.0\pergisafar-web.xml
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\obj\Debug\net6.0\pergisafar-web.xml

@@ -24,8 +24,6 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
-
-
 builder.Services.AddScoped<ConvertJWT>();
 
 builder.Services.AddAuthentication(options =>
