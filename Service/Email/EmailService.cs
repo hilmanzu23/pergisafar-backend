@@ -8,7 +8,7 @@ namespace SendingEmail
     {
         public Task SendingEmail(EmailForm model)
         {
-            var mail = "tutorial@gmail.com";
+            var mail = "travelberkah23@outlook.com";
             var pw = "padang123";
 
             var client = new SmtpClient("smtp-mail.outlook.com", 587)

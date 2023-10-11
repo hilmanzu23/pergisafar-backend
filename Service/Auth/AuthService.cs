@@ -92,53 +92,54 @@ namespace RepositoryPattern.Services.AuthService
         {
             try
             {
-                // if (!IsValidEmail(data.Email))
-                // {
-                //     throw new Exception("Format Email salah.");
-                // }
-                // if (data.Password.Length < 8)
-                // {
-                //     throw new Exception("Password harus 8 karakter");
-                // }
-                // var filter = Builders<User>.Filter.Eq(u => u.Email, data.Email);
-                // var user = await dataUser.Find(filter).SingleOrDefaultAsync();
+                if (!IsValidEmail(data.Email))
+                {
+                    throw new Exception("Format Email salah.");
+                }
+                if (data.Password.Length < 8)
+                {
+                    throw new Exception("Password harus 8 karakter");
+                }
+                var filter = Builders<User>.Filter.Eq(u => u.Email, data.Email);
+                var user = await dataUser.Find(filter).SingleOrDefaultAsync();
 
-                // if (user != null)
-                // {
-                //     throw new Exception("Email sudah digunakan.");
-                // }
+                if (user != null)
+                {
+                    throw new Exception("Email sudah digunakan.");
+                }
 
-                // string hashedPassword = BCrypt.Net.BCrypt.HashPassword(data.Password);
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(data.Password);
 
-                // var roleData = new User()
-                // {
-                //     Id = Guid.NewGuid().ToString(),
-                //     Email = data.Email,
-                //     Password = hashedPassword,
-                //     IsActive = true,
-                //     IsVerification = false,
-                //     Balance = 0,
-                //     Point = 0,
-                //     PhoneNumber = "",
-                //     Pin = "",
-                //     IdRole = "ebe6b5b1-71f5-4872-b0ca-408184372153",
-                //     CreatedAt = DateTime.Now
-                // };
+                var roleData = new User()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Email = data.Email,
+                    Password = hashedPassword,
+                    IsActive = true,
+                    IsVerification = false,
+                    Balance = 0,
+                    Point = 0,
+                    PhoneNumber = "",
+                    Pin = "",
+                    IdRole = "ebe6b5b1-71f5-4872-b0ca-408184372153",
+                    CreatedAt = DateTime.Now
+                };
 
-                // await dataUser.InsertOneAsync(roleData);
-                // string roleIdAsString = roleData.Id.ToString();
+                await dataUser.InsertOneAsync(roleData);
+                string roleIdAsString = roleData.Id.ToString();
+
                 var email = new EmailForm()
                 {
-                    Email = data.Email,
+                    Email = "hilmanzutech@gmail.com",
                     Subject = "test",
-                    Message = "Silahkan Saja Coba Test"
+                    Message = $"Pendaftaran Berhasil silahkan klik link ini untuk verifikasi https://localhost:7083/auth/aktifasi/{ roleIdAsString }"
                 };
                 var sending = _emailService.SendingEmail(email);
                 return new { 
                     success = true,
                     message = "pendaftaran berhasil silahkan cek email untuk melakukan aktifasi",
-                    result = sending 
-                    // id = roleIdAsString 
+                    result = sending,
+                    id = roleIdAsString 
                 };
             }
             catch (Exception ex)
