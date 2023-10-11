@@ -7,7 +7,7 @@ namespace test_blazor.Server.Controllers
 {
     [ApiController]
     [Route("/[controller]")]
-    public class UsersController: ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IUserService _IUserService;
         public UsersController(IUserService userService)
@@ -20,43 +20,57 @@ namespace test_blazor.Server.Controllers
         {
             try
             {
-                var data = await _IUserService.Get();                
-                return new {items=data, message = "Berhasil"};
+                var data = await _IUserService.Get();
+                return new { items = data, message = "Berhasil" };
             }
             catch (System.Exception data)
             {
-                
-                return new {error = data.Message};
+
+                return new { error = data.Message };
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<object> GetId([FromRoute] string id)
+        {
+            try
+            {
+                return await _IUserService.GetId(id);
+            }
+            catch (System.Exception)
+            {
+
+                throw;
             }
         }
 
         [HttpPut("{id}")]
-        public async Task<object> Put([FromRoute]string id, [FromBody]User item)
+        public async Task<object> Put([FromRoute] string id, [FromBody] User item)
         {
             try
             {
-                var data = await _IUserService.Put(id, item);                
-                return new {data};
+                var data = await _IUserService.Put(id, item);
+                return await _IUserService.Put(id, item);
             }
             catch (System.Exception data)
             {
-                
-                return new {error = data.Message};
+
+                return new { error = data.Message };
             }
         }
 
         [HttpDelete("{id}")]
-        public async Task<object> Delete([FromRoute]string id)
+        public async Task<object> Delete([FromRoute] string id)
         {
             try
             {
-                var data = await _IUserService.Delete(id);                
-                return new {items=data, message = "Berhasil"};
+                var data = await _IUserService.Delete(id);
+                return new { items = data, message = "Berhasil" };
             }
             catch (System.Exception data)
             {
-                
-                return new {error = data.Message};
+
+                return new { error = data.Message };
             }
         }
     }

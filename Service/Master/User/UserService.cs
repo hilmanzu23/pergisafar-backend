@@ -48,5 +48,15 @@ namespace RepositoryPattern.Services.UserService
             await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
             return new { success = true, id = roleData.Id.ToString() };
         }
+
+        public async Task<Object> GetId(string id)
+        {
+            var items = await dataUser.Find(_ => _.Id == id).FirstOrDefaultAsync();
+            if (items == null)
+            {
+                return new { success = false, errorMessage = "Data not found" };
+            }
+            return items;
+        }
     }
 }
