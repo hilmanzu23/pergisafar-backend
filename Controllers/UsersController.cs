@@ -6,7 +6,7 @@ using pergisafar.Shared.Models;
 namespace test_blazor.Server.Controllers
 {
     [ApiController]
-    [Route("/[controller]")]
+    [Route("User")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _IUserService;

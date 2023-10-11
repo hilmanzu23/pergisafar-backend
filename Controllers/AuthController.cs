@@ -19,7 +19,7 @@ namespace test_blazor.Server.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("auth/login")]
+        [Route("Auth/Login")]
         public async Task<IActionResult> LoginAsync([FromBody] UserForm login)
         {
             try
@@ -35,7 +35,7 @@ namespace test_blazor.Server.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("auth/register")]
+        [Route("Auth/Register")]
         public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterCustomer login)
         {
             try
@@ -52,7 +52,7 @@ namespace test_blazor.Server.Controllers
 
         [Authorize]
         [HttpPost]
-        [Route("auth/updatepassword")]
+        [Route("Auth/UpdatePassword")]
         public async Task<object> UpdatePassword([FromBody] UpdatePasswordForm item)
         {
             try
@@ -74,7 +74,7 @@ namespace test_blazor.Server.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("auth/verifyOtp/{id}")]
+        [Route("Auth/VerifyOtp/{id}")]
         public async Task<object> VerifyOtp([FromRoute] string id, [FromBody] OtpForm otp)
         {
             try
@@ -90,7 +90,7 @@ namespace test_blazor.Server.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("auth/requestOtpEmail/{email}")]
+        [Route("Auth/RequestOtpEmail/{email}")]
         public async Task<object> RequestOtp([FromRoute] string email)
         {
             try
@@ -106,7 +106,7 @@ namespace test_blazor.Server.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        [Route("auth/aktifasi/{id}")]
+        [Route("Auth/Aktifasi/{id}")]
         public async Task<object> VerifySeasonsAsync([FromRoute] string id)
         {
             try
@@ -122,7 +122,7 @@ namespace test_blazor.Server.Controllers
 
         [Authorize]
         [HttpGet]
-        [Route("auth/verify")]
+        [Route("Auth/VerifySessions")]
         public object Aktifasi()
         {
             try

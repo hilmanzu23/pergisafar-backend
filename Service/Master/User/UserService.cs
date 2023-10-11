@@ -9,6 +9,8 @@ namespace RepositoryPattern.Services.UserService
     public class UserService : IUserService
     {
         private readonly IMongoCollection<User> dataUser;
+        private readonly IMongoCollection<Role> dataRole;
+
         private readonly string key;
 
         public UserService(IConfiguration configuration)
@@ -16,6 +18,8 @@ namespace RepositoryPattern.Services.UserService
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
             IMongoDatabase database = client.GetDatabase("testprod");
             dataUser = database.GetCollection<User>("users");
+            dataRole = database.GetCollection<Role>("roles");
+
             this.key = configuration.GetSection("AppSettings")["JwtKey"];
         }
         public async Task<List<User>> Get()
@@ -52,11 +56,22 @@ namespace RepositoryPattern.Services.UserService
         public async Task<Object> GetId(string id)
         {
             var items = await dataUser.Find(_ => _.Id == id).FirstOrDefaultAsync();
+            var Role = await dataRole.Find(_ => _.Id == items.IdRole).FirstOrDefaultAsync();
+
             if (items == null)
             {
                 return new { success = false, errorMessage = "Data not found" };
             }
-            return items;
+            return new
+            {
+                id = items.Id,
+                Roles = Role.Name,
+                Name = items.FullName,
+                Balance = items.Balance,
+                Point = items.Point,
+                Email = items.Email,
+                Phone = items.PhoneNumber
+            };
         }
     }
 }
