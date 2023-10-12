@@ -106,7 +106,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.Run("http://0.0.0.0:5002");
+app.Run("http://0.0.0.0:8080");
 
 app.UseHttpsRedirection();
 
