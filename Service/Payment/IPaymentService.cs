@@ -7,5 +7,6 @@ public interface IPaymentService
 {
     Task<Object> GetPayment();
     Task<Object> MakePayment(CreatePaymentDto createPaymentDto);
+    Task<Object> GetId(string id);
 
 }

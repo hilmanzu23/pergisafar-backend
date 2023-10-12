@@ -20,7 +20,7 @@ namespace RepositoryPattern.Services.PaymentService
         {
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
             IMongoDatabase database = client.GetDatabase("testprod");
-            dataUser = database.GetCollection<Payment>("payment");
+            dataUser = database.GetCollection<Payment>("transactions");
             _httpClient = httpClientFactory.CreateClient();
             _configuration = configuration;
             this.key = configuration.GetSection("AppSettings")["JwtKey"];
@@ -59,6 +59,7 @@ namespace RepositoryPattern.Services.PaymentService
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
                     var jsonObject = JsonConvert.DeserializeObject<PaymentMethod.Temperatures>(responseContent);
+                    
                     return new {data = jsonObject , success = false};
                 }
                 else
@@ -117,6 +118,19 @@ namespace RepositoryPattern.Services.PaymentService
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
                     var jsonObject = JsonConvert.DeserializeObject<PaymentMaking.Temperatures>(responseContent);
+                    var roleData = new Payment()
+                    {
+                        Id = merchantOrder,
+                        IdUser = "123",
+                        IdTransactions = "sad",
+                        Signature = hash,
+                        IsActive = true,
+                        IsVerification = false,
+                        CreatedAt = DateTime.Now,
+                        Data = jsonObject,
+                        Amount = createPaymentDto.PaymentAmount
+                    };
+                    await dataUser.InsertOneAsync(roleData);
                     return new {success = true, data = jsonObject};
                 }
                 else
@@ -125,6 +139,20 @@ namespace RepositoryPattern.Services.PaymentService
                     return new {success = false};
                 }
             }
+        }
+
+        public async Task<Object> GetId(string id)
+        {
+            var items = await dataUser.Find(_ => _.Id == id).FirstOrDefaultAsync();
+
+            if (items == null)
+            {
+                return new { success = false, errorMessage = "Data not found" };
+            }
+            return new
+            {
+                success = true, data = items
+            };
         }
 
         private string GenerateUUID()

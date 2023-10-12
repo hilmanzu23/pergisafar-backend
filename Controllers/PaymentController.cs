@@ -18,6 +18,20 @@ namespace test_blazor.Server.Controllers
             _ConvertJwt = convert;
         }
 
+        [HttpGet("GetPayment/{id}")]
+        public async Task<object> GetId([FromRoute] string id)
+        {
+            try
+            {
+                return await _IPaymentService.GetId(id);
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+        }
+
         [AllowAnonymous]
         [HttpGet]
         [Route("PaymentMethod")]
