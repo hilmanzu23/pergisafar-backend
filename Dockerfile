@@ -1,23 +1,15 @@
-# Use the official .NET Core runtime as a parent image
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 WORKDIR /app
 EXPOSE 8080
 
-# Use the official .NET Core SDK as a parent image for building
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /src
-COPY ["pergisafar-web/pergisafar-web.csproj", "pergisafar-web/"]
-RUN dotnet restore "pergisafar-web/pergisafar-web.csproj"
-COPY . .
-WORKDIR "/src/pergisafar-web"
-RUN dotnet build "pergisafar-web.csproj" -c Release -o /app/build
+COPY . ./
+RUN dotnet publish -c Release -o out
 
-# Publish the application
-FROM build AS publish
-RUN dotnet publish "pergisafar-web.csproj" -c Release -o /app/publish
-
-# Set the entry point for the application
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build-env /app/out .
+
+ENV ASPNETCORE_ENVIRONMENT Production
+
 ENTRYPOINT ["dotnet", "pergisafar-web.dll"]
+
