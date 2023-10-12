@@ -165,6 +165,7 @@ namespace RepositoryPattern.Services.AuthService
             roleData.Password = hashedPassword;
             await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
             return new { success = true, id = roleData.Id.ToString() };
+            //
         }
 
         public async Task<object> RequestOtpEmail(string id)
