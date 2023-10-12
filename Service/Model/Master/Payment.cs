@@ -5,7 +5,6 @@ namespace pergisafar.Shared.Models
 {
     public class Payment : BaseModel
     {
-        internal Temperatures? Data;
 
         [BsonId]
         public string? Id { get; set; }
@@ -21,5 +20,8 @@ namespace pergisafar.Shared.Models
         
         [BsonElement("Amount")]
         public double Amount { get; internal set; }
+        
+        [BsonElement("Data")]
+        public Temperatures? Data { get; internal set; }
     }
 }

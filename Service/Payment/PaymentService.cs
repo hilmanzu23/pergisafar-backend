@@ -3,14 +3,14 @@ using System.Text;
 using MongoDB.Driver;
 using pergisafar.Shared.Models;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
+using CheckId;
 
 namespace RepositoryPattern.Services.PaymentService
 {
     public class PaymentService : IPaymentService
     {
         private readonly IMongoCollection<Payment> dataUser;
+        private readonly IMongoCollection<User> users;
         private readonly IConfiguration _configuration;
         private readonly HttpClient _httpClient;
 
@@ -21,6 +21,7 @@ namespace RepositoryPattern.Services.PaymentService
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
             IMongoDatabase database = client.GetDatabase("testprod");
             dataUser = database.GetCollection<Payment>("transactions");
+            users = database.GetCollection<User>("users");
             _httpClient = httpClientFactory.CreateClient();
             _configuration = configuration;
             this.key = configuration.GetSection("AppSettings")["JwtKey"];
@@ -28,10 +29,10 @@ namespace RepositoryPattern.Services.PaymentService
 
         public async Task<object> GetPayment()
         {
-            string merchantCode = "DS16190";
             string amount = "10000";
             string dateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            string secretKey = "d45f0ff05e0147b7eb7053b0aa1a0224";
+            string merchantCode = _configuration["MerchantCode"];
+            string secretKey = _configuration["SecretKey"];
 
             string data = merchantCode + amount + dateTime + secretKey;
             byte[] dataBytes = Encoding.UTF8.GetBytes(data);
@@ -72,10 +73,9 @@ namespace RepositoryPattern.Services.PaymentService
 
         public async Task<Object> MakePayment(CreatePaymentDto createPaymentDto)
         {
-            string merchantCode = "DS16190";
+            string merchantCode = _configuration["MerchantCode"];
             string merchantOrder = Guid.NewGuid().ToString();
-            string secretKey = "d45f0ff05e0147b7eb7053b0aa1a0224";
-
+            string secretKey = _configuration["SecretKey"];
             string data = merchantCode + merchantOrder + createPaymentDto.PaymentAmount + secretKey;
             byte[] dataBytes = Encoding.UTF8.GetBytes(data);
             using (MD5 md5 = MD5.Create())
@@ -94,14 +94,14 @@ namespace RepositoryPattern.Services.PaymentService
                     additionalParam = "",
                     merchantUserInfo = "",
                     customerVaName = createPaymentDto.FullName,
-                    email = "hil@gmail.com",
+                    email = createPaymentDto.Email,
                     phoneNumber = createPaymentDto.PhoneNumber,
                     itemDetails = new[]
                     {
                         new
                         {
                             name = createPaymentDto.FullName,
-                            price = createPaymentDto.PaymentAmount.ToString(),///sumber masalah
+                            price = createPaymentDto.PaymentAmount.ToString(),
                             quantity = 1
                         }
                     },
@@ -121,8 +121,8 @@ namespace RepositoryPattern.Services.PaymentService
                     var roleData = new Payment()
                     {
                         Id = merchantOrder,
-                        IdUser = "123",
-                        IdTransactions = "sad",
+                        IdUser = createPaymentDto.IdUser,
+                        IdTransactions = Transaksi.TopUp,
                         Signature = hash,
                         IsActive = true,
                         IsVerification = false,
@@ -155,11 +155,46 @@ namespace RepositoryPattern.Services.PaymentService
             };
         }
 
-        private string GenerateUUID()
+        public async Task<object> ApprovalPayment(ApprovalPayment data)
         {
-            return Guid.NewGuid().ToString();
-        }
+            try
+            {
+                var check = await dataUser.Find(x => x.Id == data.merchantOrderId & x.Signature == data.signature).FirstOrDefaultAsync();
 
+                if (check == null)
+                {
+                    return new { success = false, message = "Invalid request." };
+                }
+
+                if (check.IsVerification == true)
+                {
+                    return new { success = false, message = "Invalid request." };
+                }
+
+                if (check.IdTransactions == Transaksi.TopUp)
+                {
+                    var checkUser = await users.Find(x => x.Id == check.IdUser).FirstOrDefaultAsync();
+                    if (checkUser == null)
+                    {
+                        return new { success = false, message = "User not found." };
+                    }
+                    //update saldo
+                    checkUser.Balance = checkUser.Balance + check.Amount;
+                    await users.ReplaceOneAsync(x => x.Id == check.IdUser, checkUser);
+                    //update transaksi
+                    check.IsVerification = true;
+                    await dataUser.ReplaceOneAsync(x => x.Id == data.merchantOrderId, check);
+                    return new { success = true, data = check };
+                }
+
+                return new { success = true, data = check };
+            }
+            catch (Exception ex)
+            {
+                return new { success = false, message = "An error occurred.", error = ex.Message };
+            }
+        }
+// 50dc73b7-50c3-4564-9f55-6f866609f840
         public class CreatePaymentDto
         {
             public string PaymentMethod { get; set; }
@@ -168,6 +203,7 @@ namespace RepositoryPattern.Services.PaymentService
             public string Email { get; set; }
             public double PaymentAmount { get; set; }
             public string ProductDetails { get; set; }
+            public string IdUser { get; set; }
         }
     }
 }

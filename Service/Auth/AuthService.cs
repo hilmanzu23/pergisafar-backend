@@ -9,6 +9,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using System.Text;
 using SendingEmail;
+using CheckId;
 
 namespace RepositoryPattern.Services.AuthService
 {
@@ -122,7 +123,7 @@ namespace RepositoryPattern.Services.AuthService
                     Point = 0,
                     PhoneNumber = "",
                     Pin = "",
-                    IdRole = "ebe6b5b1-71f5-4872-b0ca-408184372153",
+                    IdRole = Roles.User,
                     CreatedAt = DateTime.Now
                 };
 

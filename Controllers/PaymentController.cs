@@ -64,6 +64,22 @@ namespace test_blazor.Server.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("ApprovalPayment")]
+        public async Task<IActionResult> ApprovalPayment([FromBody] ApprovalPayment createPaymentDto)
+        {
+            try
+            {
+                var dataList = await _IPaymentService.ApprovalPayment(createPaymentDto);
+                return Ok(dataList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 
 }

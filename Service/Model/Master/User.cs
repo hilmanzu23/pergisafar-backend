@@ -28,7 +28,7 @@ namespace pergisafar.Shared.Models
         public string? Pin { get; set; }
 
         [BsonElement("Balance")]
-        public decimal? Balance { get; set; }
+        public double? Balance { get; set; }
 
         [BsonElement("Point")]
         public decimal? Point { get; set; }
