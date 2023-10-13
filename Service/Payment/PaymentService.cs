@@ -43,7 +43,7 @@ namespace RepositoryPattern.Services.PaymentService
                 string hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
 
                 string apiUrl = "https://sandbox.duitku.com/webapi/api/merchant/paymentmethod/getpaymentmethod";
-                
+
                 var requestData = new
                 {
                     merchantcode = merchantCode,
@@ -60,13 +60,13 @@ namespace RepositoryPattern.Services.PaymentService
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
                     var jsonObject = JsonConvert.DeserializeObject<PaymentMethod.Temperatures>(responseContent);
-                    
-                    return new {data = jsonObject , success = false};
+
+                    return new { data = jsonObject, success = false };
                 }
                 else
                 {
                     // Handle the error response here.
-                    return new {data = "Error" , success = false};
+                    return new { data = "Error", success = false };
                 }
             }
         }
@@ -131,12 +131,12 @@ namespace RepositoryPattern.Services.PaymentService
                         Amount = createPaymentDto.PaymentAmount
                     };
                     await dataUser.InsertOneAsync(roleData);
-                    return new {success = true, data = jsonObject};
+                    return new { success = true, data = jsonObject };
                 }
                 else
                 {
                     // Handle the error response here.
-                    return new {success = false};
+                    return new { success = false };
                 }
             }
         }
@@ -151,7 +151,8 @@ namespace RepositoryPattern.Services.PaymentService
             }
             return new
             {
-                success = true, data = items
+                success = true,
+                data = items
             };
         }
 
@@ -159,7 +160,7 @@ namespace RepositoryPattern.Services.PaymentService
         {
             try
             {
-                var check = await dataUser.Find(x => x.Id == data.merchantOrderId & x.Signature == data.signature).FirstOrDefaultAsync();
+                var check = await dataUser.Find(x => x.Id == data.merchantOrderId).FirstOrDefaultAsync();
 
                 if (check == null)
                 {
@@ -194,7 +195,7 @@ namespace RepositoryPattern.Services.PaymentService
                 return new { success = false, message = "An error occurred.", error = ex.Message };
             }
         }
-// 50dc73b7-50c3-4564-9f55-6f866609f840
+        // 50dc73b7-50c3-4564-9f55-6f866609f840
         public class CreatePaymentDto
         {
             public string PaymentMethod { get; set; }
