@@ -23,13 +23,13 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ./myapp # Use a relative path for output
+        run: dotnet publish -c Release -o ./pergisafar # Use a relative path for output
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: .net-app
-          path: ./myapp # Use a relative path for the artifact
+          path: ./pergisafar # Use a relative path for the artifact
 
   deploy:
     runs-on: windows-latest
@@ -51,4 +51,4 @@ jobs:
           app-name: "pergisafar" # Update with your Azure Web App name
           slot-name: "Production" # Update with your Azure Slot name
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A1411C7FC0334218859B7103CD4B7147 }}
-          package: ./myapp # Use a relative path for the artifact
+          package: ./pergisafar # Use a relative path for the artifact
