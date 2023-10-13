@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/5b198b80-e5fa-4005-af33-42e2fb3ebc9d/resourceGroups/DefaultResourceGroup-EUS/providers/Microsoft.Web/sites/travelberkah",
+  "appService.deploySubpath": "bin\\Publish"
+}
