@@ -1,37 +1,57 @@
-name: Deploy to Azure App Service
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.Net Core app to Azure Web App - pergisafar
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  build:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: Setup .NET
+      - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: "6.0.x"
           include-prerelease: true
 
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build application
+      - name: Build with dotnet
         run: dotnet build --configuration Release
 
-      - name: Publish application
+      - name: dotnet publish
         run: dotnet publish -c Release -o ./publish
 
-      - name: Deploy to Azure App Service
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v2
+        with:
+          name: .net-app
+          path: ./publish
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: "Production"
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: .net-app
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: "pergisafar" # Replace with your Azure App Service name
-          slot-name: "Production" # Replace with your Azure deployment slot name, or remove this line for the main slot
-          publish-profile: ${{ secrets.AZURE_APP_SERVICE_PUBLISHPROFILE }}
-          package: ./publish
+          app-name: "pergisafar"
+          slot-name: "Production"
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A1411C7FC0334218859B7103CD4B7147 }}
+          package: .
