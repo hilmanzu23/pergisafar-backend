@@ -106,3 +106,4 @@ C:\Users\90123259\CodeHilmanzu\pergisafar-web\obj\Debug\net6.0\pergisafar-web.xm
 E:\Dev\pergisafar-backend\bin\Debug\net6.0\pergisafar-web.xml
 E:\Dev\pergisafar-backend\obj\Debug\net6.0\pergisafar-web.xml
 E:\Dev\pergisafar-backend\bin\Debug\net6.0\Newtonsoft.Json.dll
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Debug\net6.0\Newtonsoft.Json.dll
