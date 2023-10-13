@@ -1,54 +1,37 @@
-name: Build and deploy ASP.Net Core app to Azure Web App - pergisafar
+name: Deploy to Azure App Service
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Set up .NET Core
+      - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: "6.0.x"
           include-prerelease: true
 
-      - name: Build with dotnet
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build application
         run: dotnet build --configuration Release
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ./bin/Release # Use a relative path for output
+      - name: Publish application
+        run: dotnet publish -c Release -o ./publish
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
-        with:
-          name: .net-app
-          path: ./bin/Release # Use a relative path for the artifact
-
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: "Production" # Check if this environment name is correct
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
-        with:
-          name: .net-app
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
+      - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
-          app-name: "pergisafar" # Update with your Azure Web App name
-          slot-name: "Production" # Update with your Azure Slot name
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A1411C7FC0334218859B7103CD4B7147 }}
-          package: ./bin/Release # Use a relative path for the artifact
+          app-name: "pergisafar" # Replace with your Azure App Service name
+          slot-name: "Production" # Replace with your Azure deployment slot name, or remove this line for the main slot
+          publish-profile: ${{ secrets.AZURE_APP_SERVICE_PUBLISHPROFILE }}
+          package: ./publish
