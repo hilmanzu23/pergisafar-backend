@@ -1,6 +1,16 @@
 C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\pergisafar-web.exe
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\publish\web.config
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\web.config
 C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\appsettings.Development.json
 C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\appsettings.json
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\appsettings.Development.json
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\appsettings.json
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\pergisafar-web.deps.json
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\pergisafar-web.runtimeconfig.json
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\publish\appsettings.Development.json
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\publish\appsettings.json
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\publish\pergisafar-web.deps.json
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\publish\pergisafar-web.runtimeconfig.json
 C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\pergisafar-web.dll
 C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\pergisafar-web.deps.json
 C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\pergisafar-web.runtimeconfig.json
