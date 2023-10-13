@@ -67,12 +67,22 @@ namespace test_blazor.Server.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("ApprovalPayment")]
-        public async Task<IActionResult> ApprovalPayment([FromBody] ApprovalPayment createPaymentDto)
+        public async Task<IActionResult> ApprovalPayment()
         {
             try
             {
-                var dataList = await _IPaymentService.ApprovalPayment(createPaymentDto);
-                return Ok(dataList);
+                if (Request.HasFormContentType)
+                {
+                    // You can access the form data using the Form property of the Request object.
+                    var merchantOrderId = Request.Form["merchantOrderId"].ToString();
+                    // Call your service method with the merchantOrderId
+                    var dataList = await _IPaymentService.ApprovalPayment(merchantOrderId);
+                    return Ok(dataList);
+                }
+                else
+                {
+                    return BadRequest("No form data found in the request.");
+                }
             }
             catch (Exception ex)
             {

@@ -156,11 +156,11 @@ namespace RepositoryPattern.Services.PaymentService
             };
         }
 
-        public async Task<object> ApprovalPayment(ApprovalPayment data)
+        public async Task<object> ApprovalPayment(string merchantOrderId)
         {
             try
             {
-                var check = await dataUser.Find(x => x.Id == data.merchantOrderId).FirstOrDefaultAsync();
+                var check = await dataUser.Find(x => x.Id == merchantOrderId).FirstOrDefaultAsync();
 
                 if (check == null)
                 {
@@ -184,7 +184,7 @@ namespace RepositoryPattern.Services.PaymentService
                     await users.ReplaceOneAsync(x => x.Id == check.IdUser, checkUser);
                     //update transaksi
                     check.IsVerification = true;
-                    await dataUser.ReplaceOneAsync(x => x.Id == data.merchantOrderId, check);
+                    await dataUser.ReplaceOneAsync(x => x.Id == merchantOrderId, check);
                     return new { success = true, data = check };
                 }
 
