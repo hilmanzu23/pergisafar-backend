@@ -10,6 +10,8 @@ using MongoDB.Bson;
 using System.Text;
 using SendingEmail;
 using CheckId;
+using System.ComponentModel.DataAnnotations;
+using test_blazor.Server.Controllers;
 
 namespace RepositoryPattern.Services.AuthService
 {
@@ -18,8 +20,9 @@ namespace RepositoryPattern.Services.AuthService
         private readonly IMongoCollection<User> dataUser;
         private readonly IEmailService _emailService;
         private readonly string key;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IConfiguration configuration, IEmailService emailService)
+        public AuthService(IConfiguration configuration, IEmailService emailService, ILogger<AuthService> logger)
         {
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
             IMongoDatabase database = client.GetDatabase("testprod");
@@ -27,6 +30,7 @@ namespace RepositoryPattern.Services.AuthService
             // var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             this.key = configuration.GetSection("AppSettings")["JwtKey"];
             _emailService = emailService;
+            _logger = logger;
         }
 
         public string Authenticate(UserForm login, string? id)
@@ -55,38 +59,38 @@ namespace RepositoryPattern.Services.AuthService
             {
                 if (!IsValidEmail(login.Email))
                 {
-                    throw new Exception("Format Email salah.");
+                    throw new CustomException(400, "Format Email salah.");
                 }
                 if (login.Password.Length < 8)
                 {
-                    throw new Exception("Password harus 8 karakter");
+                    throw new CustomException(400, "Password harus 8 karakter");
                 }
-                var filter = Builders<User>.Filter.Eq(u => u.Email, login.Email);
-                var user = await dataUser.Find(filter).SingleOrDefaultAsync();
+                var user = await dataUser.Find(u => u.Email == login.Email).FirstOrDefaultAsync();
                 if (user == null)
                 {
-                    throw new Exception("Email atau Password Salah");
+                    throw new CustomException(400, "Email tidak ditemukan");
                 }
                 bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(login.Password, user.Password);
                 if (!isPasswordCorrect)
                 {
-                    throw new Exception("Email atau Password Salah");
+                    throw new CustomException(400, "Password Salah");
                 }
                 if (user.IsActive == false)
                 {
-                    throw new Exception("Akun anda tidak perbolehkan akses");
+                    throw new CustomException(400, "Akun anda tidak perbolehkan akses");
                 }
                 if (user.IsVerification == false)
                 {
-                    throw new Exception("Akun anda belum aktif, silahkan aktifasi melalui link kami kirimkan di email anda");
+                    throw new CustomException(400, "Akun anda belum aktif, silahkan aktifasi melalui link kami kirimkan di email anda");
                 }
                 string token = Authenticate(login, user.Id);
                 string idAsString = user.Id.ToString();
-                return new { success = true, id = idAsString, accessToken = token };
+                return new { code = 200, id = idAsString, accessToken = token };
             }
-            catch (Exception ex)
+            catch (CustomException ex)
             {
-                return new { Error = ex.Message };
+                _logger.LogError(ex, "An error occurred during login.");
+                throw;
             }
         }
 
@@ -96,18 +100,22 @@ namespace RepositoryPattern.Services.AuthService
             {
                 if (!IsValidEmail(data.Email))
                 {
-                    throw new Exception("Format Email salah.");
+                    throw new CustomException(400, "Format Email Salah");
                 }
                 if (data.Password.Length < 8)
                 {
-                    throw new Exception("Password harus 8 karakter");
+                    throw new CustomException(400, "Password Harus Lebih 8 Karakter");
                 }
-                var filter = Builders<User>.Filter.Eq(u => u.Email, data.Email);
-                var user = await dataUser.Find(filter).SingleOrDefaultAsync();
+                var user = await dataUser.Find(u => u.Email == data.Email).FirstOrDefaultAsync();
 
                 if (user != null)
                 {
-                    throw new Exception("Email sudah digunakan.");
+                    throw new CustomException(400, "Email Sudah digunakan");
+                }
+                var phonenumber = await dataUser.Find(u => u.PhoneNumber == data.PhoneNumber).FirstOrDefaultAsync();
+                if (phonenumber != null)
+                {
+                    throw new CustomException(400, "Ponsel Sudah digunakan");
                 }
 
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(data.Password);
@@ -115,13 +123,14 @@ namespace RepositoryPattern.Services.AuthService
                 var roleData = new User()
                 {
                     Id = Guid.NewGuid().ToString(),
+                    FullName = data.FullName,
                     Email = data.Email,
                     Password = hashedPassword,
+                    PhoneNumber = data.PhoneNumber,
                     IsActive = true,
                     IsVerification = false,
                     Balance = 0,
                     Point = 0,
-                    PhoneNumber = "",
                     Pin = "",
                     IdRole = Roles.User,
                     CreatedAt = DateTime.Now
@@ -144,9 +153,10 @@ namespace RepositoryPattern.Services.AuthService
                     id = roleIdAsString
                 };
             }
-            catch (Exception ex)
+            catch (CustomException ex)
             {
-                return new { Error = ex.Message };
+                _logger.LogError(ex, "An error occurred during login.");
+                throw;
             }
         }
 
@@ -218,6 +228,7 @@ namespace RepositoryPattern.Services.AuthService
         {
             public string? Email { get; set; }
             public string? FullName { get; set; }
+            public string? PhoneNumber { get; set; }
             public string? Password { get; set; }
         }
 

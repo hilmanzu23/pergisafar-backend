@@ -11,25 +11,29 @@ namespace test_blazor.Server.Controllers
     {
         private readonly IAuthService _IAuthService;
         private readonly ConvertJWT _ConvertJwt;
+        private readonly ErrorHandlingUtility _errorUtility;
         public AuthController(IAuthService authService, ConvertJWT convert)
         {
             _IAuthService = authService;
             _ConvertJwt = convert;
+            _errorUtility = new ErrorHandlingUtility();
         }
 
         [AllowAnonymous]
         [HttpPost]
         [Route("Auth/Login")]
-        public async Task<IActionResult> LoginAsync([FromBody] UserForm login)
+        public async Task<object> LoginAsync([FromBody] UserForm login)
         {
             try
             {
-                var dataList = await _IAuthService.LoginAsync(login);
-                return Ok(dataList);
+                var response = await _IAuthService.LoginAsync(login);
+                return Ok(response);
             }
-            catch (Exception ex)
+            catch (CustomException ex)
             {
-                return StatusCode(500, ex.Message);
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
 
@@ -40,13 +44,19 @@ namespace test_blazor.Server.Controllers
         {
             try
             {
-                var claims = User.Claims;
+                if (string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.FullName) || string.IsNullOrEmpty(login.PhoneNumber) || string.IsNullOrEmpty(login.Password))
+                {
+                    var errorResponse = new ErrorResponse(400, "Data tidak boleh kosong");
+                    return _errorUtility.HandleError(400, errorResponse);
+                }
                 var dataList = await _IAuthService.RegisterAsync(login);
                 return Ok(dataList);
             }
-            catch (Exception ex)
+            catch (CustomException ex)
             {
-                return StatusCode(500, ex.Message);
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
 
