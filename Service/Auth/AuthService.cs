@@ -143,7 +143,7 @@ namespace RepositoryPattern.Services.AuthService
                 {
                     Email = data.Email,
                     Subject = "Aktifasi Travel Berkah",
-                    Message = $"Pendaftaran Berhasil silahkan klik link ini untuk verifikasi https://localhost:7083/auth/aktifasi/{roleIdAsString}"
+                    Message = $"Pendaftaran Berhasil silahkan klik link ini untuk verifikasi https://travelberkah.azurewebsites.net/Auth/Aktifasi/{roleIdAsString}"
                 };
                 var sending = _emailService.SendingEmail(email);
                 return new
@@ -180,23 +180,32 @@ namespace RepositoryPattern.Services.AuthService
 
         public async Task<object> RequestOtpEmail(string id)
         {
-            var roleData = await dataUser.Find(x => x.Email == id).FirstOrDefaultAsync();
-            if (roleData == null)
+            try
             {
-                return new { success = false, errorMessage = "Data not found" };
+
+                var roleData = await dataUser.Find(x => x.Email == id).FirstOrDefaultAsync();
+                if (roleData == null)
+                {
+                    throw new CustomException(400, "Data not found");
+                }
+                Random random = new Random();
+                string otp = random.Next(10000, 99999).ToString();
+                var email = new EmailForm()
+                {
+                    Email = roleData.Email,
+                    Subject = "Request OTP",
+                    Message = $"Berikut adalah OTP anda /br {otp}"
+                };
+                var sending = _emailService.SendingEmail(email);
+                roleData.Otp = otp;
+                await dataUser.ReplaceOneAsync(x => x.Email == id, roleData);
+                return new { success = true, id = roleData.Id.ToString() };
             }
-            Random random = new Random();
-            string otp = random.Next(10000, 99999).ToString();
-            var email = new EmailForm()
+            catch (CustomException ex)
             {
-                Email = roleData.Email,
-                Subject = "Request OTP",
-                Message = $"Berikut adalah OTP anda /br {otp}"
-            };
-            var sending = _emailService.SendingEmail(email);
-            roleData.Otp = otp;
-            await dataUser.ReplaceOneAsync(x => x.Email == id, roleData);
-            return new { success = true, id = roleData.Id.ToString() };
+                _logger.LogError(ex, "An error occurred during login.");
+                throw;
+            }
         }
 
         public async Task<object> VerifyOtp(string id, OtpForm otp)
