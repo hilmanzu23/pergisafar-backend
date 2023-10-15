@@ -1,8 +1,6 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using pergisafar.Shared.Models;
-using static RepositoryPattern.Services.AuthService.AuthService;
 using static RepositoryPattern.Services.PaymentService.PaymentService;
 
 namespace test_blazor.Server.Controllers
@@ -18,6 +16,7 @@ namespace test_blazor.Server.Controllers
             _ConvertJwt = convert;
         }
 
+        [Authorize]
         [HttpGet("GetPayment/{id}")]
         public async Task<object> GetId([FromRoute] string id)
         {
@@ -32,7 +31,7 @@ namespace test_blazor.Server.Controllers
             }
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet]
         [Route("PaymentMethod")]
         public async Task<IActionResult> PaymentMethod()
@@ -48,7 +47,7 @@ namespace test_blazor.Server.Controllers
             }
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost]
         [Route("MakePayment")]
         public async Task<IActionResult> MakePayment([FromBody] CreatePaymentDto createPaymentDto)
@@ -64,7 +63,7 @@ namespace test_blazor.Server.Controllers
             }
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost]
         [Route("ApprovalPayment")]
         public async Task<IActionResult> ApprovalPayment()

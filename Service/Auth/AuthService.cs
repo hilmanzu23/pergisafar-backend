@@ -162,20 +162,27 @@ namespace RepositoryPattern.Services.AuthService
 
         public async Task<object> UpdatePassword(string id, UpdatePasswordForm item)
         {
-            var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
-            if (roleData == null)
+            try
             {
-                return new { success = false, errorMessage = "Data not found" };
+                var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
+                if (roleData == null)
+                {
+                    throw new CustomException(400, "Data tidak ada");
+                }
+                if (item.Password.Length < 8)
+                {
+                    throw new CustomException(400, "Password harus 8 karakter");
+                }
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(item.Password);
+                roleData.Password = hashedPassword;
+                await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
+                return new { success = true, id = roleData.Id.ToString() };
             }
-            if (item.Password.Length < 8)
+            catch (CustomException ex)
             {
-                throw new Exception("Password harus 8 karakter");
+                _logger.LogError(ex, "An error occurred during login.");
+                throw;
             }
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(item.Password);
-            roleData.Password = hashedPassword;
-            await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
-            return new { success = true, id = roleData.Id.ToString() };
-            //
         }
 
         public async Task<object> RequestOtpEmail(string id)
@@ -210,21 +217,29 @@ namespace RepositoryPattern.Services.AuthService
 
         public async Task<object> VerifyOtp(string id, OtpForm otp)
         {
-            var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
-            if (roleData == null)
+            try
             {
-                return new { success = false, errorMessage = "Data not found" };
+                var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
+                if (roleData == null)
+                {
+                    throw new CustomException(400, "Data not found");
+                }
+                if (roleData.Otp != otp.Otp)
+                {
+                    throw new CustomException(400, "Otp anda salah");
+                }
+                var data = new UserForm();
+                {
+                    data.Email = roleData.Email;
+                }
+                string token = Authenticate(data, roleData.Id);
+                return new { success = true, id = roleData.Id.ToString(), accessToken = token };
             }
-            if (roleData.Otp != otp.Otp)
+            catch (CustomException ex)
             {
-                return new { success = false, errorMessage = "Wrong Otp" };
+                _logger.LogError(ex, "An error occurred during login.");
+                throw;
             }
-            var data = new UserForm();
-            {
-                data.Email = roleData.Email;
-            }
-            string token = Authenticate(data, roleData.Id);
-            return new { success = true, id = roleData.Id.ToString(), accessToken = token };
         }
 
         public class UserForm
@@ -269,14 +284,22 @@ namespace RepositoryPattern.Services.AuthService
 
         public async Task<object> Aktifasi(string id)
         {
-            var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
-            if (roleData == null)
+            try
             {
-                return new { success = false, errorMessage = "Data not found" };
+                var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
+                if (roleData == null)
+                {
+                    throw new CustomException(400, "Data not found");
+                }
+                roleData.IsVerification = true;
+                await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
+                return new { success = true, id = roleData.Id.ToString(), message = "Email berhasil di verifikasi" };
             }
-            roleData.IsVerification = true;
-            await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
-            return new { success = true, id = roleData.Id.ToString() };
+            catch (CustomException ex)
+            {
+                _logger.LogError(ex, "An error occurred during login.");
+                throw;
+            }
         }
     }
 }

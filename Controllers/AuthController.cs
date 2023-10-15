@@ -71,14 +71,16 @@ namespace test_blazor.Server.Controllers
                 string idUser = await _ConvertJwt.ConvertString(accessToken);
                 if (item.Password != item.ConfirmPassword)
                 {
-                    return new { success = false, errorMessage = "Password tidak sama" };
+                    throw new CustomException(400, "Password tidak sama");
                 }
                 var dataList = await _IAuthService.UpdatePassword(idUser, item);
                 return Ok(dataList);
             }
-            catch (Exception ex)
+            catch (CustomException ex)
             {
-                return StatusCode(500, ex.Message);
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
 
@@ -92,9 +94,11 @@ namespace test_blazor.Server.Controllers
                 var dataList = await _IAuthService.VerifyOtp(id, otp);
                 return Ok(dataList);
             }
-            catch (Exception ex)
+            catch (CustomException ex)
             {
-                return StatusCode(500, ex.Message);
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
 
@@ -108,9 +112,11 @@ namespace test_blazor.Server.Controllers
                 var dataList = await _IAuthService.RequestOtpEmail(email);
                 return Ok(dataList);
             }
-            catch (Exception ex)
+            catch (CustomException ex)
             {
-                return StatusCode(500, ex.Message);
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
 
@@ -124,9 +130,11 @@ namespace test_blazor.Server.Controllers
                 var dataList = await _IAuthService.Aktifasi(id);
                 return Ok(dataList);
             }
-            catch (Exception ex)
+            catch (CustomException ex)
             {
-                return StatusCode(500, ex.Message);
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
 
@@ -144,9 +152,11 @@ namespace test_blazor.Server.Controllers
                 }
                 return new { success = true, message = "Masih Berlaku" };
             }
-            catch (Exception ex)
+            catch (CustomException ex)
             {
-                return StatusCode(500, ex.Message);
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
     }

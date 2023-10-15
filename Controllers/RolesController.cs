@@ -8,7 +8,7 @@ namespace test_blazor.Server.Controllers
 {
     [ApiController]
     [Route("/[controller]")]
-    public class RoleController: ControllerBase
+    public class RoleController : ControllerBase
     {
         private readonly IRoleService _IRoleService;
         public RoleController(IRoleService roleService)
@@ -16,66 +16,70 @@ namespace test_blazor.Server.Controllers
             _IRoleService = roleService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<object> Get()
         {
             try
             {
-                var data = await _IRoleService.Get();                
-                return new {items=data, message = "Berhasil"};
+                var data = await _IRoleService.Get();
+                return new { items = data, message = "Berhasil" };
             }
             catch (System.Exception data)
             {
-                
-                return new {error = data.Message};
+
+                return new { error = data.Message };
             }
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<object> Post([FromBody]RoleForm item)
+        public async Task<object> Post([FromBody] RoleForm item)
         {
             try
             {
-                var data = await _IRoleService.Post(item);                
-                return new {data};
+                var data = await _IRoleService.Post(item);
+                return new { data };
             }
             catch (System.Exception data)
             {
-                
-                return new {error = data.Message};
+
+                return new { error = data.Message };
             }
         }
 
+        [Authorize]
         [HttpPut("{id}")]
-        public async Task<object> Put([FromRoute]string id, [FromBody]Role item)
+        public async Task<object> Put([FromRoute] string id, [FromBody] Role item)
         {
             try
             {
-                var data = await _IRoleService.Put(id, item);                
-                return new {data};
+                var data = await _IRoleService.Put(id, item);
+                return new { data };
             }
             catch (System.Exception data)
             {
-                
-                return new {error = data.Message};
+
+                return new { error = data.Message };
             }
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
-        public async Task<object> Delete([FromRoute]string id)
+        public async Task<object> Delete([FromRoute] string id)
         {
             try
             {
-                var data = await _IRoleService.Delete(id);                
-                return new {items=data, message = "Berhasil"};
+                var data = await _IRoleService.Delete(id);
+                return new { items = data, message = "Berhasil" };
             }
             catch (System.Exception data)
             {
-                
-                return new {error = data.Message};
+
+                return new { error = data.Message };
             }
         }
 
-       
+
     }
 }

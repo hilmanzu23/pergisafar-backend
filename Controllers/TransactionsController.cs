@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static RepositoryPattern.Services.TransactionsService.TransactionsService;
 
@@ -5,7 +6,7 @@ namespace test_blazor.Server.Controllers
 {
     [ApiController]
     [Route("/[controller]")]
-    public class TypeTransactionsController: ControllerBase
+    public class TypeTransactionsController : ControllerBase
     {
         private readonly ITransactionsService _transactionsService;
 
@@ -14,66 +15,70 @@ namespace test_blazor.Server.Controllers
             _transactionsService = transactionsService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<object> Get()
         {
             try
             {
-                var data = await _transactionsService.Get();                
-                return new {items=data, message = "Berhasil"};
+                var data = await _transactionsService.Get();
+                return new { items = data, message = "Berhasil" };
             }
             catch (System.Exception data)
             {
-                
-                return new {error = data.Message};
+
+                return new { error = data.Message };
             }
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<object> Post([FromBody]TypeForm item)
+        public async Task<object> Post([FromBody] TypeForm item)
         {
             try
             {
-                var data = await _transactionsService.Post(item);                
-                return new {data};
+                var data = await _transactionsService.Post(item);
+                return new { data };
             }
             catch (System.Exception data)
             {
-                
-                return new {error = data.Message};
+
+                return new { error = data.Message };
             }
         }
 
+        [Authorize]
         [HttpPut("{id}")]
-        public async Task<object> Put([FromRoute]string id, [FromBody]TypeForm item)
+        public async Task<object> Put([FromRoute] string id, [FromBody] TypeForm item)
         {
             try
             {
-                var data = await _transactionsService.Put(id, item);                
-                return new {data};
+                var data = await _transactionsService.Put(id, item);
+                return new { data };
             }
             catch (System.Exception data)
             {
-                
-                return new {error = data.Message};
+
+                return new { error = data.Message };
             }
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
-        public async Task<object> Delete([FromRoute]string id)
+        public async Task<object> Delete([FromRoute] string id)
         {
             try
             {
-                var data = await _transactionsService.Delete(id);                
-                return new {items=data, message = "Berhasil"};
+                var data = await _transactionsService.Delete(id);
+                return new { items = data, message = "Berhasil" };
             }
             catch (System.Exception data)
             {
-                
-                return new {error = data.Message};
+
+                return new { error = data.Message };
             }
         }
 
-       
+
     }
 }

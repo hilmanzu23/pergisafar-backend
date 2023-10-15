@@ -30,6 +30,7 @@ namespace test_blazor.Server.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<object> GetId([FromRoute] string id)
         {
@@ -44,6 +45,7 @@ namespace test_blazor.Server.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<object> Put([FromRoute] string id, [FromBody] User item)
         {
@@ -59,6 +61,7 @@ namespace test_blazor.Server.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<object> Delete([FromRoute] string id)
         {
