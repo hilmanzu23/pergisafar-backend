@@ -63,7 +63,6 @@ namespace test_blazor.Server.Controllers
             }
         }
 
-        [Authorize]
         [HttpPost]
         [Route("ApprovalPayment")]
         public async Task<IActionResult> ApprovalPayment()
