@@ -2,16 +2,13 @@
 
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using pergisafar.Shared.Models;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
-using MongoDB.Bson;
 using System.Text;
-using SendingEmail;
 using CheckId;
-using System.ComponentModel.DataAnnotations;
-using test_blazor.Server.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
+using pergisafar.Shared.Models;
+using SendingEmail;
 
 namespace RepositoryPattern.Services.AuthService
 {
@@ -44,7 +41,7 @@ namespace RepositoryPattern.Services.AuthService
                     new Claim(ClaimTypes.Name, id), // NOTE: this will be the "User.Identity.Name" value
                     new Claim(JwtRegisteredClaimNames.Sub, id),
                 }),
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.AddMonths(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keys), SecurityAlgorithms.HmacSha256Signature),
                 Issuer = "pergisafar.com",
                 Audience = "pergisafar.com",
