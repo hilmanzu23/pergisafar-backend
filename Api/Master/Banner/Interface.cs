@@ -6,7 +6,7 @@ using static test_blazor.Server.Controllers.RoleController;
 public interface IBannerService
 {
     Task<Object> Get();
-    Task<Object> Post(CreateBannerDto items);
-    Task<Object> Put(string id, CreateBannerDto items);
+    Task<Object> Post(ImageUploadViewModel item);
+    Task<Object> Put(string id, ImageUploadViewModel items);
     Task<Object> Delete(string id);
 }

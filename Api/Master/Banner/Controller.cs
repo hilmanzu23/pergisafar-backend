@@ -35,17 +35,12 @@ namespace test_blazor.Server.Controllers
 
         // [Authorize]
         [HttpPost]
-        public async Task<object> Post([FromBody] CreateBannerDto item)
+        [Consumes("multipart/form-data")]
+        public async Task<object> Post([FromForm] ImageUploadViewModel model)
         {
             try
-            {
-                var validationErrors = _masterValidationService.ValidateBannerInput(item);
-                if (validationErrors.Count > 0)
-                {
-                    var errorResponse = new { code = 400, errorMessage = validationErrors };
-                    return BadRequest(errorResponse);
-                }
-                var data = await _IBannerService.Post(item);
+            {  
+                var data = await _IBannerService.Post(model);
                 return Ok(data);    
             }
             catch (CustomException ex)
@@ -58,7 +53,7 @@ namespace test_blazor.Server.Controllers
 
         // [Authorize]
         [HttpPut("{id}")]
-        public async Task<object> Put([FromRoute] string id, [FromBody] CreateBannerDto item)
+        public async Task<object> Put([FromRoute] string id, [FromBody] ImageUploadViewModel item)
         {
             try
             {

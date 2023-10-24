@@ -6,14 +6,18 @@ namespace RepositoryPattern.Services.BannerService
     public class BannerService : IBannerService
     {
         private readonly IMongoCollection<Banner> dataUser;
+        private readonly IMongoCollection<ImageModel> dataImage;
+        private readonly IWebHostEnvironment _environment;
         private readonly string key;
 
-        public BannerService(IConfiguration configuration)
+        public BannerService(IWebHostEnvironment environment, IConfiguration configuration)
         {
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
             IMongoDatabase database = client.GetDatabase("testprod");
-            dataUser = database.GetCollection<Banner>("Banner");
+            dataUser = database.GetCollection<Banner>("banner");
+            dataImage = database.GetCollection<ImageModel>("image");
             this.key = configuration.GetSection("AppSettings")["JwtKey"];
+            _environment = environment;
         }
         public async Task<Object> Get()
         {
@@ -27,26 +31,49 @@ namespace RepositoryPattern.Services.BannerService
                 throw;
             }
         }
-        public async Task<object> Post(CreateBannerDto item)
+        public async Task<object> Post(ImageUploadViewModel  model)
         {
             try
             {
-                var filter = Builders<Banner>.Filter.Eq(u => u.Name, item.Name);
-                var user = await dataUser.Find(filter).SingleOrDefaultAsync();
-                if (user != null)
+                ////upload image sections
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
-                    throw new CustomException(400, "Nama sudah digunakan.");
-                }
-                var BannerData = new Banner()
+                    byte[] imageData;
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await model.ImageFile.CopyToAsync(memoryStream);
+                        imageData = memoryStream.ToArray();
+                    }
+
+                    var image = new ImageModel()
                     {
                         Id = Guid.NewGuid().ToString(),
-                        Name = item.Name,
-                        IsActive = true,
-                        IsVerification = false,
-                        CreatedAt = DateTime.Now
+                        ImageData = imageData,
+                        Name = model.ImageFile.FileName,
                     };
-                await dataUser.InsertOneAsync(BannerData);
-                return new { code = 200, id = BannerData.Id, message = "Data Add Complete" };
+
+                    var filter = Builders<Banner>.Filter.Eq(u => u.Name, model.Name);
+                    var user = await dataUser.Find(filter).SingleOrDefaultAsync();
+                    if (user != null)
+                    {
+                        throw new CustomException(400, "Nama sudah digunakan.");
+                    }
+                    
+                    var BannerData = new Banner()
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Name = image.Name,
+                            Image = image.Id,
+                            IsActive = true,
+                            IsVerification = false,
+                            CreatedAt = DateTime.Now
+                        };
+                    await dataImage.InsertOneAsync(image);
+                    await dataUser.InsertOneAsync(BannerData);
+                    return new { code = 200, id = BannerData.Id, message = "Data Add Complete" };
+                }else{
+                    throw new CustomException(400,"faild");
+                }
             }
             catch (CustomException)
             {
@@ -54,7 +81,7 @@ namespace RepositoryPattern.Services.BannerService
             }
         }
 
-        public async Task<object> Put(string id, CreateBannerDto item)
+        public async Task<object> Put(string id, ImageUploadViewModel item)
         {
             try
             {
