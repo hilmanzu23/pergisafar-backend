@@ -4,6 +4,14 @@ public class CreateRoleDto
 
 }
 
+public class CreateBannerDto
+{
+    public string? Name { get; set; }
+    public string? Image { get; set; }
+
+
+}
+
 public class CreateSettingDto
 {
     public string? Key { get; set; }

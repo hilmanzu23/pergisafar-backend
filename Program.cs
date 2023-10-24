@@ -11,6 +11,7 @@ using RepositoryPattern.Services.SettingService;
 using RepositoryPattern.Services.PaymentService;
 using SendingEmail;
 using RepositoryPattern.Services.TransactionsTypeService;
+using RepositoryPattern.Services.BannerService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,8 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ITransactionsTypeService, TransactionsTypeService>();
+builder.Services.AddScoped<IBannerService, BannerService>();
+
 builder.Services.AddScoped<ConvertJWT>();
 
 
