@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Processing;
 
 namespace test_blazor.Server.Controllers
 {
@@ -27,12 +30,13 @@ namespace test_blazor.Server.Controllers
             var image = await dataUser.Find(i => i.Id == id).FirstOrDefaultAsync();
             if (image != null)
             {
-                return File(image.ImageData, "image/jpeg"); // Adjust the content type based on your image format
+                return File(image.ImageData, "image/jpeg");
+                
             }
 
-            return NotFound(); // Return a not found result if image data is not available
+            return NotFound();
+            
         }
-
 
     }
 }

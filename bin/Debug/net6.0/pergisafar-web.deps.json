@@ -13,6 +13,7 @@
           "MongoDB.Driver": "2.21.0",
           "Newtonsoft.Json": "13.0.2",
           "Sieve": "2.5.5",
+          "SixLabors.ImageSharp": "3.0.2",
           "Swashbuckle.AspNetCore": "6.5.0"
         },
         "runtime": {
@@ -250,6 +251,14 @@
           "lib/netstandard2.1/Sieve.dll": {
             "assemblyVersion": "2.5.5.0",
             "fileVersion": "2.5.5.0"
+          }
+        }
+      },
+      "SixLabors.ImageSharp/3.0.2": {
+        "runtime": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.0.2.0"
           }
         }
       },
@@ -520,6 +529,13 @@
       "sha512": "sha512-JNT/m73vu7lzUfi+DNGVRptWYDJTRhS7BgVwqcvlEq5sAhrMmiFZJxM3LPagjsJbcuscMrmMfLgLvhyDNGv/Bg==",
       "path": "sieve/2.5.5",
       "hashPath": "sieve.2.5.5.nupkg.sha512"
+    },
+    "SixLabors.ImageSharp/3.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-PlwUHnLZ67G1i0xXDYQJYbFiJsvXiEFWtKdV0QvY9j+dFasYbl+vWXXY42/asTsNjchsH5BLuoRzlf8Fa8lzpg==",
+      "path": "sixlabors.imagesharp/3.0.2",
+      "hashPath": "sixlabors.imagesharp.3.0.2.nupkg.sha512"
     },
     "Snappier/1.0.0": {
       "type": "package",

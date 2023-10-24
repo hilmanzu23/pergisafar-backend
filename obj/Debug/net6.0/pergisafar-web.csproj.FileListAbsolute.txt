@@ -127,3 +127,4 @@ E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\publish\appsettings.Developme
 E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\publish\appsettings.json
 E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\publish\pergisafar-web.deps.json
 E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\publish\pergisafar-web.runtimeconfig.json
+E:\Dev\pergisafar-backend\bin\Debug\net6.0\SixLabors.ImageSharp.dll

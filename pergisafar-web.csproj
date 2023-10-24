@@ -7,11 +7,12 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3"/>
-    <PackageReference Include="MongoDB.Driver" Version="2.21.0"/>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.22"/>
-    <PackageReference Include="Sieve" Version="2.5.5"/>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2"/>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="MongoDB.Driver" Version="2.21.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.22" />
+    <PackageReference Include="Sieve" Version="2.5.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 </Project>
