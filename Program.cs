@@ -10,8 +10,7 @@ using RepositoryPattern.Services.RoleService;
 using RepositoryPattern.Services.SettingService;
 using RepositoryPattern.Services.PaymentService;
 using SendingEmail;
-using RepositoryPattern.Services.TransactionsService;
-using Microsoft.AspNetCore.HttpsPolicy;
+using RepositoryPattern.Services.TransactionsTypeService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +27,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
-builder.Services.AddScoped<ITransactionsService, TransactionsService>();
+builder.Services.AddScoped<ITransactionsTypeService, TransactionsTypeService>();
 builder.Services.AddScoped<ConvertJWT>();
 
 
