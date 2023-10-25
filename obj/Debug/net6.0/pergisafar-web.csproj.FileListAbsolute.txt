@@ -117,14 +117,4 @@ C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Debug\net6.0\publish\publish\a
 C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Debug\net6.0\publish\publish\appsettings.json
 C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Debug\net6.0\publish\publish\pergisafar-web.deps.json
 C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Debug\net6.0\publish\publish\pergisafar-web.runtimeconfig.json
-E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\publish\web.config
-E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\web.config
-E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\appsettings.Development.json
-E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\appsettings.json
-E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\pergisafar-web.deps.json
-E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\pergisafar-web.runtimeconfig.json
-E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\publish\appsettings.Development.json
-E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\publish\appsettings.json
-E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\publish\pergisafar-web.deps.json
-E:\Dev\pergisafar-backend\bin\Debug\net6.0\publish\publish\pergisafar-web.runtimeconfig.json
 E:\Dev\pergisafar-backend\bin\Debug\net6.0\SixLabors.ImageSharp.dll
