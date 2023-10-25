@@ -21,6 +21,8 @@ public class TransactionDto
 
 public class TransactionViewDto
 {
+    public string? Id { get; set; }
+
     public string? IdUser { get; set; }
 
     public string? IdTransactions { get; set; }

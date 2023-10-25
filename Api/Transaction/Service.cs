@@ -52,6 +52,7 @@ namespace RepositoryPattern.Services.TransactionService
                     newArray.Add(
                         new TransactionViewDto
                         {
+                            Id = file.Id,
                             IdUser = file.IdUser,
                             TypeTransaction = transactionType,
                             Status = status,
