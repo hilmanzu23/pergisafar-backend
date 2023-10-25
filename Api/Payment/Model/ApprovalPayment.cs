@@ -10,4 +10,15 @@ namespace pergisafar.Shared.Models
         [BsonElement("signature")]
         public string? signature { get; set; }
     }
+
+    public class CreatePaymentDto
+        {
+            public string PaymentMethod { get; set; }
+            public string PhoneNumber { get; set; }
+            public string FullName { get; set; }
+            public string Email { get; set; }
+            public double PaymentAmount { get; set; }
+            public string ProductDetails { get; set; }
+            public string IdUser { get; set; }
+        }
 }

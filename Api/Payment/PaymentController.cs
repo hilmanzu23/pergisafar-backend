@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using pergisafar.Shared.Models;
 using static RepositoryPattern.Services.PaymentService.PaymentService;
 
 namespace test_blazor.Server.Controllers

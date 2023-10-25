@@ -12,6 +12,8 @@ using RepositoryPattern.Services.PaymentService;
 using SendingEmail;
 using RepositoryPattern.Services.TransactionsTypeService;
 using RepositoryPattern.Services.BannerService;
+using RepositoryPattern.Services.TransactionService;
+using RepositoryPattern.Services.StatusService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,10 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ITransactionsTypeService, TransactionsTypeService>();
+builder.Services.AddScoped<IStatusService, StatusService>();
+
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+
 builder.Services.AddScoped<IBannerService, BannerService>();
 
 builder.Services.AddScoped<ConvertJWT>();

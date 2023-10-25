@@ -10,6 +10,10 @@ namespace RepositoryPattern.Services.PaymentService
     public class PaymentService : IPaymentService
     {
         private readonly IMongoCollection<Payment> dataUser;
+        private readonly IMongoCollection<Transaction> dataTransaksi;
+        private readonly IMongoCollection<Setting> dataSetting;
+
+
         private readonly IMongoCollection<User> users;
         private readonly IConfiguration _configuration;
         private readonly HttpClient _httpClient;
@@ -20,7 +24,9 @@ namespace RepositoryPattern.Services.PaymentService
         {
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
             IMongoDatabase database = client.GetDatabase("testprod");
-            dataUser = database.GetCollection<Payment>("transactions");
+            dataUser = database.GetCollection<Payment>("topupbalance");
+            dataTransaksi = database.GetCollection<Transaction>("transactions");
+            dataSetting = database.GetCollection<Setting>("setting");
             users = database.GetCollection<User>("users");
             _httpClient = httpClientFactory.CreateClient();
             _configuration = configuration;
@@ -73,71 +79,85 @@ namespace RepositoryPattern.Services.PaymentService
 
         public async Task<Object> MakePayment(CreatePaymentDto createPaymentDto)
         {
-            string merchantCode = _configuration["MerchantCode"];
-            string merchantOrder = Guid.NewGuid().ToString();
-            string secretKey = _configuration["SecretKey"];
-            string data = merchantCode + merchantOrder + createPaymentDto.PaymentAmount + secretKey;
-            byte[] dataBytes = Encoding.UTF8.GetBytes(data);
-            using (MD5 md5 = MD5.Create())
+            var filter = Builders<Setting>.Filter.Eq(u => u.Key, "AdminTopUpBalance");
+            var admin = await dataSetting.Find(filter).SingleOrDefaultAsync();
+            double totalPaymeny = double.Parse(admin.Value) + createPaymentDto.PaymentAmount;
+            try
             {
-                byte[] hashBytes = md5.ComputeHash(dataBytes);
-                string hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-                string apiUrl = "https://sandbox.duitku.com/webapi/api/merchant/v2/inquiry";
-
-                var requestData = new
+                string merchantCode = _configuration["MerchantCode"];
+                string merchantOrder = Guid.NewGuid().ToString();
+                string secretKey = _configuration["SecretKey"];
+                string data = merchantCode + merchantOrder + totalPaymeny + secretKey;
+                byte[] dataBytes = Encoding.UTF8.GetBytes(data);
+                using (MD5 md5 = MD5.Create())
                 {
-                    merchantCode = merchantCode,
-                    paymentAmount = createPaymentDto.PaymentAmount,
-                    paymentMethod = createPaymentDto.PaymentMethod,
-                    merchantOrderId = merchantOrder,
-                    productDetails = createPaymentDto.ProductDetails,
-                    additionalParam = "",
-                    merchantUserInfo = "",
-                    customerVaName = createPaymentDto.FullName,
-                    email = createPaymentDto.Email,
-                    phoneNumber = createPaymentDto.PhoneNumber,
-                    itemDetails = new[]
+                    byte[] hashBytes = md5.ComputeHash(dataBytes);
+                    string hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+                Console.WriteLine(hash);
+                    string apiUrl = "https://sandbox.duitku.com/webapi/api/merchant/v2/inquiry";
+
+                    var requestData = new
                     {
-                        new
+                        merchantCode = merchantCode,
+                        paymentAmount = totalPaymeny,
+                        paymentMethod = createPaymentDto.PaymentMethod,
+                        merchantOrderId = merchantOrder,
+                        productDetails = createPaymentDto.ProductDetails,
+                        additionalParam = "",
+                        merchantUserInfo = "",
+                        customerVaName = createPaymentDto.FullName,
+                        email = createPaymentDto.Email,
+                        phoneNumber = createPaymentDto.PhoneNumber,
+                        itemDetails = new[]
                         {
-                            name = createPaymentDto.FullName,
-                            price = createPaymentDto.PaymentAmount.ToString(),
-                            quantity = 1
-                        }
-                    },
-                    callbackUrl = _configuration["CallbackUrl"],
-                    returnUrl = _configuration["ReturnUrl"],
-                    signature = hash,
-                    expiryPeriod = 15
-                };
-
-                var content = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(apiUrl, content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    var jsonObject = JsonConvert.DeserializeObject<PaymentMaking.Temperatures>(responseContent);
-                    var roleData = new Payment()
-                    {
-                        Id = merchantOrder,
-                        IdUser = createPaymentDto.IdUser,
-                        IdTransactions = Transaksi.TopUp,
-                        Signature = hash,
-                        IsActive = true,
-                        IsVerification = false,
-                        CreatedAt = DateTime.Now,
-                        Data = jsonObject,
-                        Amount = createPaymentDto.PaymentAmount
+                            new
+                            {
+                                name = createPaymentDto.FullName,
+                                price = totalPaymeny.ToString(),
+                                quantity = 1
+                            }
+                        },
+                        callbackUrl = _configuration["CallbackUrl"],
+                        returnUrl = _configuration["ReturnUrl"],
+                        signature = hash,
+                        expiryPeriod = 60
                     };
-                    await dataUser.InsertOneAsync(roleData);
-                    return new { success = true, data = jsonObject };
-                }
-                else
-                {
-                    // Handle the error response here.
-                    return new { success = false };
-                }
+
+                    var content = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
+                    var response = await _httpClient.PostAsync(apiUrl, content);
+
+                        Console.WriteLine(await response.Content.ReadAsStringAsync());
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        var jsonObject = JsonConvert.DeserializeObject<PaymentMaking.Temperatures>(responseContent);
+                        var roleData = new Payment()
+                        {
+                            Id = merchantOrder,
+                            IdUser = createPaymentDto.IdUser,
+                            IdTransactions = Transaksi.TopUp,
+                            Signature = hash,
+                            IsActive = true,
+                            IsVerification = false,
+                            CreatedAt = DateTime.Now,
+                            Data = jsonObject,
+                            Amount = createPaymentDto.PaymentAmount,
+                            AdminFee = admin.Value
+                        };
+                        await dataUser.InsertOneAsync(roleData);
+                        return new { success = true, data = jsonObject };
+                    }
+                    else
+                    {
+                        // Handle the error response here.
+                        throw new CustomException(400,"Gagal");
+                    }
+                }  
+            }
+            catch (CustomException)
+            {
+                
+                throw;
             }
         }
 
@@ -185,6 +205,20 @@ namespace RepositoryPattern.Services.PaymentService
                     //update transaksi
                     check.IsVerification = true;
                     await dataUser.ReplaceOneAsync(x => x.Id == merchantOrderId, check);
+                    //update transaksi
+                    var roleData = new Transaction()
+                    {
+                        Id = merchantOrderId,
+                        IdUser = checkUser.Id,
+                        IdTransactions = Transaksi.TopUp,
+                        PaymentAmount = check.Amount,
+                        AdminFee = double.Parse(check.AdminFee),
+                        Notes = check.Signature,
+                        IsActive = true,
+                        IsVerification = false,
+                        CreatedAt = DateTime.Now,
+                    };
+                    await dataTransaksi.InsertOneAsync(roleData);
                     return new { success = true, data = check };
                 }
 
@@ -194,17 +228,6 @@ namespace RepositoryPattern.Services.PaymentService
             {
                 return new { success = false, message = "An error occurred.", error = ex.Message };
             }
-        }
-        // 50dc73b7-50c3-4564-9f55-6f866609f840
-        public class CreatePaymentDto
-        {
-            public string PaymentMethod { get; set; }
-            public string PhoneNumber { get; set; }
-            public string FullName { get; set; }
-            public string Email { get; set; }
-            public double PaymentAmount { get; set; }
-            public string ProductDetails { get; set; }
-            public string IdUser { get; set; }
         }
     }
 }

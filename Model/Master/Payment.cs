@@ -23,5 +23,8 @@ namespace pergisafar.Shared.Models
         
         [BsonElement("Data")]
         public Temperatures? Data { get; internal set; }
+
+        [BsonElement("AdminFee")]
+        public string AdminFee { get; internal set; }
     }
 }
