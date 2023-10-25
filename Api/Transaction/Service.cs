@@ -44,7 +44,7 @@ namespace RepositoryPattern.Services.TransactionService
             {
                 
                 List<Transaction>  items = await dataUser.Find(x=> x.IdUser == id).ToListAsync();
-                List<Transaction>  filtered = await dataUser.Find(x=> x.IdUser == id & x.IdStatus == idStatus).ToListAsync();
+                List<Transaction>  filtered = await dataUser.Find(x=> x.IdUser == id & x.IdTransactions == idStatus).ToListAsync();
                 List<TransactionViewDto> newArray = new List<TransactionViewDto>();
                 foreach (Transaction file in idStatus == "-" ? items : filtered)
                 {
