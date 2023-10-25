@@ -10,9 +10,11 @@ namespace test_blazor.Server.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _IUserService;
+        private readonly ErrorHandlingUtility _errorUtility;
         public UsersController(IUserService userService)
         {
             _IUserService = userService;
+            _errorUtility = new ErrorHandlingUtility();
         }
         
         [Authorize]
@@ -24,10 +26,11 @@ namespace test_blazor.Server.Controllers
                 var data = await _IUserService.Get();
                 return new { items = data, message = "Berhasil" };
             }
-            catch (System.Exception data)
+            catch (CustomException ex)
             {
-
-                return new { error = data.Message };
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
 
@@ -39,10 +42,11 @@ namespace test_blazor.Server.Controllers
             {
                 return await _IUserService.GetId(id);
             }
-            catch (System.Exception)
+            catch (CustomException ex)
             {
-
-                throw;
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
 
@@ -55,10 +59,11 @@ namespace test_blazor.Server.Controllers
                 var data = await _IUserService.Put(id, item);
                 return await _IUserService.Put(id, item);
             }
-            catch (System.Exception data)
+            catch (CustomException ex)
             {
-
-                return new { error = data.Message };
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
 
@@ -71,10 +76,11 @@ namespace test_blazor.Server.Controllers
                 var data = await _IUserService.Delete(id);
                 return new { items = data, message = "Berhasil" };
             }
-            catch (System.Exception data)
+            catch (CustomException ex)
             {
-
-                return new { error = data.Message };
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
     }

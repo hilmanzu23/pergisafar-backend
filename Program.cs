@@ -130,6 +130,18 @@ app.Use(async (context, next) =>
                 }
             }.ToString());
         }
+        if (context.Response.StatusCode == (int)HttpStatusCode.InternalServerError) // 500
+        {
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync(new ErrorDto()
+            {
+                code = 500,
+                errorMessage = new List<ErrorMessageItem>
+                {
+                    new ErrorMessageItem { error = "Data tidak ditemukan silahkan login kembali" }
+                }
+            }.ToString());
+        }
     });
 app.UseAuthentication();
 app.UseAuthorization();

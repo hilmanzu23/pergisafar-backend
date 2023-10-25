@@ -30,48 +30,72 @@ namespace RepositoryPattern.Services.UserService
 
         public async Task<object> Put(string id, User item)
         {
-            var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
-            if (roleData == null)
+            try
             {
-                return new { success = false, errorMessage = "Data not found" };
+                
+                var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
+                if (roleData == null)
+                {
+                    throw new CustomException(400, "Data NotFound");
+                }
+                roleData.FullName = item.FullName;
+                roleData.PhoneNumber = item.PhoneNumber;
+                roleData.Balance = item.Balance;
+                await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
+                return new { success = true, id = roleData.Id.ToString() };
             }
-            roleData.FullName = item.FullName;
-            roleData.PhoneNumber = item.PhoneNumber;
-            roleData.Balance = item.Balance;
-            await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
-            return new { success = true, id = roleData.Id.ToString() };
+            catch (CustomException)
+            {
+                
+                throw;
+            }
         }
         public async Task<object> Delete(string id)
         {
-            var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
-            if (roleData == null)
-            {
-                return new { success = false, errorMessage = "Data not found" };
+            try
+            {    
+                var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
+                if (roleData == null)
+                {
+                    throw new CustomException(400, "Data NotFound");
+                }
+                roleData.IsActive = true;
+                await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
+                return new { success = true, id = roleData.Id.ToString() };
             }
-            roleData.IsActive = true;
-            await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
-            return new { success = true, id = roleData.Id.ToString() };
+            catch (CustomException)
+            {
+                
+                throw;
+            }
         }
 
         public async Task<Object> GetId(string id)
         {
-            var items = await dataUser.Find(_ => _.Id == id).FirstOrDefaultAsync();
-            var Role = await dataRole.Find(_ => _.Id == items.IdRole).FirstOrDefaultAsync();
-
-            if (items == null)
+            try
             {
-                return new { success = false, errorMessage = "Data not found" };
+                var items = await dataUser.Find(_ => _.Id == id).FirstOrDefaultAsync();
+                if (items == null)
+                {
+                    throw new CustomException(400, "Data NotFound");
+                }
+                var Role = await dataRole.Find(_ => _.Id == items.IdRole).FirstOrDefaultAsync();
+                return new
+                {
+                    id = items.Id,
+                    Roles = Role.Name,
+                    Name = items.FullName,
+                    Balance = items.Balance,
+                    Point = items.Point,
+                    Email = items.Email,
+                    Phone = items.PhoneNumber
+                };
             }
-            return new
+            catch (CustomException)
             {
-                id = items.Id,
-                Roles = Role.Name,
-                Name = items.FullName,
-                Balance = items.Balance,
-                Point = items.Point,
-                Email = items.Email,
-                Phone = items.PhoneNumber
-            };
+                
+                throw;
+            }
         }
     }
 }
