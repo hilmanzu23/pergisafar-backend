@@ -77,7 +77,7 @@ namespace RepositoryPattern.Services.UserService
                 var items = await dataUser.Find(_ => _.Id == id).FirstOrDefaultAsync();
                 if (items == null)
                 {
-                    throw new CustomException(400, "Data NotFound");
+                    throw new CustomException(400, "Data tidak ditemukan silahkan login kembali");
                 }
                 var Role = await dataRole.Find(_ => _.Id == items.IdRole).FirstOrDefaultAsync();
                 return new
