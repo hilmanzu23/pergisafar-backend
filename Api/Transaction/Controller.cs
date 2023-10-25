@@ -34,6 +34,22 @@ namespace test_blazor.Server.Controllers
             }
         }
 
+        [HttpGet("ByUser/{id}")]
+        public async Task<object> GetUserId([FromRoute]string id)
+        {
+            try
+            {
+                var data = await _ITransactionService.GetId(id);
+                return Ok(data);
+            }
+            catch (CustomException ex)
+            {
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
+            }
+        }
+
         // [Authorize]
         [HttpPost]
         public async Task<object> Post([FromBody] TransactionDto item)

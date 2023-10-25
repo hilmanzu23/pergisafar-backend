@@ -1,3 +1,4 @@
+using CheckId;
 using MongoDB.Bson.Serialization.Attributes;
 using pergisafar.Shared.Models;
 
@@ -12,9 +13,15 @@ public class Transaction : BaseModel
 
     [BsonElement("IdTransactions")]
     public string? IdTransactions { get; set; }
+    
+    [BsonElement("TypeTransaction")]
+    public TransactionsType TypeTransaction {get; set;}
 
     [BsonElement("IdStatus")]
     public string? IdStatus { get; set; }
+    
+    [BsonElement("Status")]
+    public Status? Status {get; set;}
 
     [BsonElement("PaymentAmount")]
     public double PaymentAmount { get; set; }

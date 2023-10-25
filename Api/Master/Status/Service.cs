@@ -12,7 +12,7 @@ namespace RepositoryPattern.Services.StatusService
         {
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
             IMongoDatabase database = client.GetDatabase("testprod");
-            dataUser = database.GetCollection<Status>("Status");
+            dataUser = database.GetCollection<Status>("status");
             this.key = configuration.GetSection("AppSettings")["JwtKey"];
         }
         public async Task<Object> Get()

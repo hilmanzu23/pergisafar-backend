@@ -125,8 +125,6 @@ namespace RepositoryPattern.Services.PaymentService
 
                     var content = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
                     var response = await _httpClient.PostAsync(apiUrl, content);
-
-                        Console.WriteLine(await response.Content.ReadAsStringAsync());
                     if (response.IsSuccessStatusCode)
                     {
                         var responseContent = await response.Content.ReadAsStringAsync();

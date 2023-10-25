@@ -1,5 +1,6 @@
 
 
+using MongoDB.Bson;
 using MongoDB.Driver;
 using pergisafar.Shared.Models;
 
@@ -8,13 +9,20 @@ namespace RepositoryPattern.Services.TransactionService
     public class TransactionService : ITransactionService
     {
         private readonly IMongoCollection<Transaction> dataUser;
+
+        private readonly IMongoCollection<TransactionsType> dataType;
+        private readonly IMongoCollection<Status> dataStatus;
+
         private readonly string key;
 
         public TransactionService(IConfiguration configuration)
         {
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
             IMongoDatabase database = client.GetDatabase("testprod");
-            dataUser = database.GetCollection<Transaction>("transaction");
+            dataUser = database.GetCollection<Transaction>("transactions");
+            dataType = database.GetCollection<TransactionsType>("transactionstype");
+            dataStatus = database.GetCollection<Status>("status");
+
             this.key = configuration.GetSection("AppSettings")["JwtKey"];
         }
         public async Task<Object> Get()
@@ -29,23 +37,55 @@ namespace RepositoryPattern.Services.TransactionService
                 throw;
             }
         }
+
+        public async Task<Object> GetId(string id)
+        {
+            try
+            {
+                
+                List<Transaction>  items = await dataUser.Find(x=> x.IdUser == id).ToListAsync();
+                List<TransactionViewDto> newArray = new List<TransactionViewDto>();
+                foreach (Transaction file in items)
+                {
+                    TransactionsType transactionType = await dataType.Find(x => x.Id == file.IdTransactions).FirstOrDefaultAsync();
+                    Status status = await dataStatus.Find(x => x.Id == file.IdStatus).FirstOrDefaultAsync();
+                    newArray.Add(
+                        new TransactionViewDto
+                        {
+                            IdUser = file.IdUser,
+                            TypeTransaction = transactionType,
+                            Status = status,
+                            PaymentAmount = file.PaymentAmount,
+                            AdminFee = file.AdminFee,
+                            Notes = file.Notes,
+                            CreatedAt = file.CreatedAt
+                        }
+                    );
+                }
+                return new { code = 200, data = newArray, message = "Data Add Complete" };
+            }
+           catch (CustomException)
+            {
+                throw;
+            }
+        }
         public async Task<object> Post(TransactionDto item)
         {
             try
             {
                 var TransactionData = new Transaction()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        IdUser = item.IdUser,
-                        IdTransactions = item.IdTransactions,
-                        IdStatus = item.IdStatus,
-                        PaymentAmount = item.PaymentAmount,
-                        AdminFee = item.AdminFee,
-                        TotalAmount = item.TotalAmount,
-                        Notes = item.Notes,
-                        IsActive = true,
-                        CreatedAt = DateTime.Now
-                    };
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    IdUser = item.IdUser,
+                    IdTransactions = item.IdTransactions,
+                    IdStatus = item.IdStatus,
+                    PaymentAmount = item.PaymentAmount,
+                    AdminFee = item.AdminFee,
+                    TotalAmount = item.TotalAmount,
+                    Notes = item.Notes,
+                    IsActive = true,
+                    CreatedAt = DateTime.Now
+                };
                 await dataUser.InsertOneAsync(TransactionData);
                 return new { code = 200, id = TransactionData.Id, message = "Data Add Complete" };
             }
