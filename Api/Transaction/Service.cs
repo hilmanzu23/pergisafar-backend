@@ -38,14 +38,15 @@ namespace RepositoryPattern.Services.TransactionService
             }
         }
 
-        public async Task<Object> GetId(string id)
+        public async Task<Object> GetId(string id, string idStatus)
         {
             try
             {
                 
                 List<Transaction>  items = await dataUser.Find(x=> x.IdUser == id).ToListAsync();
+                List<Transaction>  filtered = await dataUser.Find(x=> x.IdUser == id & x.IdStatus == idStatus).ToListAsync();
                 List<TransactionViewDto> newArray = new List<TransactionViewDto>();
-                foreach (Transaction file in items)
+                foreach (Transaction file in idStatus == "-" ? items : filtered)
                 {
                     TransactionsType transactionType = await dataType.Find(x => x.Id == file.IdTransactions).FirstOrDefaultAsync();
                     Status status = await dataStatus.Find(x => x.Id == file.IdStatus).FirstOrDefaultAsync();

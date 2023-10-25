@@ -34,12 +34,12 @@ namespace test_blazor.Server.Controllers
             }
         }
 
-        [HttpGet("ByUser/{id}")]
-        public async Task<object> GetUserId([FromRoute]string id)
+        [HttpGet("ByUser/{id}/{idStatus}")]
+        public async Task<object> GetUserId([FromRoute]string id,string idStatus)
         {
             try
             {
-                var data = await _ITransactionService.GetId(id);
+                var data = await _ITransactionService.GetId(id,idStatus);
                 return Ok(data);
             }
             catch (CustomException ex)
