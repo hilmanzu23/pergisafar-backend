@@ -9,6 +9,8 @@ public interface IPaymentService
     Task<Object> MakePayment(CreatePaymentDto createPaymentDto);
 
     Task<Object> ApprovalPayment(string data);
+    Task<Object> ApprovalBuyer(string data);
+
 
     Task<Object> GetId(string id);
 

@@ -89,6 +89,31 @@ namespace test_blazor.Server.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("ApprovalBuyer")]
+        public async Task<IActionResult> ApprovalBuyer()
+        {
+            try
+            {
+                if (Request.HasFormContentType)
+                {
+                    // You can access the form data using the Form property of the Request object.
+                    var merchantOrderId = Request.Form["merchantOrderId"].ToString();
+                    // Call your service method with the merchantOrderId
+                    var dataList = await _IPaymentService.ApprovalBuyer(merchantOrderId);
+                    return Ok(dataList);
+                }
+                else
+                {
+                    return BadRequest("No form data found in the request.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 
 }

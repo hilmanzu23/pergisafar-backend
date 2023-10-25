@@ -228,5 +228,60 @@ namespace RepositoryPattern.Services.PaymentService
                 return new { success = false, message = "An error occurred.", error = ex.Message };
             }
         }
+
+        public async Task<object> ApprovalBuyer(string merchantOrderId)
+        {
+            try
+            {
+                var check = await dataUser.Find(x => x.Id == merchantOrderId).FirstOrDefaultAsync();
+
+                if (check == null)
+                {
+                    return new { success = false, message = "Invalid request." };
+                }
+
+                if (check.IsVerification == true)
+                {
+                    return new { success = false, message = "Invalid request." };
+                }
+
+                if (check.IdTransactions == Transaksi.TopUp)
+                {
+                    var checkUser = await users.Find(x => x.Id == check.IdUser).FirstOrDefaultAsync();
+                    if (checkUser == null)
+                    {
+                        return new { success = false, message = "User not found." };
+                    }
+                    //update saldo
+                    checkUser.Balance = checkUser.Balance + check.Amount;
+                    await users.ReplaceOneAsync(x => x.Id == check.IdUser, checkUser);
+                    //update transaksi
+                    check.IsVerification = true;
+                    await dataUser.ReplaceOneAsync(x => x.Id == merchantOrderId, check);
+                    //update transaksi
+                    var roleData = new Transaction()
+                    {
+                        Id = merchantOrderId,
+                        IdUser = checkUser.Id,
+                        IdTransactions = Transaksi.TopUp,
+                        IdStatus = StatusId.Success,
+                        PaymentAmount = check.Amount,
+                        AdminFee = double.Parse(check.AdminFee),
+                        Notes = check.Signature,
+                        IsActive = true,
+                        IsVerification = false,
+                        CreatedAt = DateTime.Now,
+                    };
+                    await dataTransaksi.InsertOneAsync(roleData);
+                    return new { success = true, data = check };
+                }
+
+                return new { success = true, data = check };
+            }
+            catch (Exception ex)
+            {
+                return new { success = false, message = "An error occurred.", error = ex.Message };
+            }
+        }
     }
 }

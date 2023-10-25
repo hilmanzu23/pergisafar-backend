@@ -15,6 +15,7 @@ using RepositoryPattern.Services.BannerService;
 using RepositoryPattern.Services.TransactionService;
 using RepositoryPattern.Services.StatusService;
 using System.Net;
+using RepositoryPattern.Services.PricePrepaidService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,8 @@ builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ITransactionsTypeService, TransactionsTypeService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
+builder.Services.AddScoped<IPricePrepaidService, PricePrepaidService>();
+
 
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
