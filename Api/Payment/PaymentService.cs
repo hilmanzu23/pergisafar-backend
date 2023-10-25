@@ -211,6 +211,7 @@ namespace RepositoryPattern.Services.PaymentService
                         Id = merchantOrderId,
                         IdUser = checkUser.Id,
                         IdTransactions = Transaksi.TopUp,
+                        IdStatus = StatusId.Success,
                         PaymentAmount = check.Amount,
                         AdminFee = double.Parse(check.AdminFee),
                         Notes = check.Signature,
