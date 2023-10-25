@@ -14,6 +14,7 @@ using RepositoryPattern.Services.TransactionsTypeService;
 using RepositoryPattern.Services.BannerService;
 using RepositoryPattern.Services.TransactionService;
 using RepositoryPattern.Services.StatusService;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -112,6 +113,24 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.Use(async (context, next) =>
+    {
+        await next();
+     
+        if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized) // 401
+        {
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync(new ErrorDto()
+            {
+                code = 401,
+                errorMessage = new List<ErrorMessageItem>
+                {
+                    new ErrorMessageItem { error = "UnAuthorized" }
+                }
+            }.ToString());
+        }
+    });
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

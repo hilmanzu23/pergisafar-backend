@@ -14,7 +14,8 @@ namespace test_blazor.Server.Controllers
         {
             _IUserService = userService;
         }
-
+        
+        [Authorize]
         [HttpGet]
         public async Task<object> Get()
         {

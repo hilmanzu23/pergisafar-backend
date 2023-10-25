@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 public class ErrorResponse
 {
     public int Code { get; set; }
@@ -10,7 +12,7 @@ public class ErrorResponse
         {
             new ErrorMessageItem
             {
-                Error = errorMessage
+                error = errorMessage
             }
         };
     }
@@ -18,5 +20,16 @@ public class ErrorResponse
 
 public class ErrorMessageItem
 {
-    public string Error { get; set; }
+    public string error { get; set; }
+}
+
+public class ErrorDto
+{
+    public int code { get; set; }
+    public List<ErrorMessageItem> errorMessage { get; set; }
+    
+    public override string ToString()
+    {
+        return JsonSerializer.Serialize(this);
+    }
 }
