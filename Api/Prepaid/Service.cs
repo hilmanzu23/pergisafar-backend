@@ -1,4 +1,5 @@
 using System.Text;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using pergisafar.Shared.Models;
@@ -29,13 +30,47 @@ namespace RepositoryPattern.Services.PricePrepaidService
             this.endpointDev = configuration.GetSection("IAKSettings")["EndPointDev"];
         }
 
-        public async Task<Object> Get(string search, string provider)
+        public async Task<Object> GetPulsa(string provider)
         {
             try
             {   
-                string operatorName = OperatorChecker.GetOperatorName(provider).ToLower();
-                var items = await dataUser.Find(_ => _.product_type == search & _.product_description == operatorName & _.status == "active").Sort(Builders<PricePrepaid>.Sort.Ascending("product_nominal")).ToListAsync();
-                return new { code = 200, data = items, message = "Data Add Complete", length = items.Count };
+                string operatorName = OperatorChecker.GetOperatorNamePulsa(provider).ToLower();
+                // Create filter conditions for product_type and status
+                var filter = Builders<PricePrepaid>.Filter.And(
+                    Builders<PricePrepaid>.Filter.Eq("product_type", "pulsa"),
+                    Builders<PricePrepaid>.Filter.Eq("status", "active")
+                );
+                // Query the MongoDB collection with the filter conditions
+                var items = await dataUser.Find(filter).SortBy(p => p.product_nominal).ToListAsync();
+                // Filter the results based on product_code
+                var filteredProducts = items.Where(product =>
+                    product.product_code.Contains(operatorName)
+                ).ToList();
+                return new { code = 200, data = filteredProducts, message = "Data Add Complete", length = filteredProducts.Count };
+            }
+            catch (CustomException)
+            {
+                throw;
+            }
+        }
+
+        public async Task<Object> GetData(string provider)
+        {
+            try
+            {   
+                string operatorName = OperatorChecker.GetOperatorNameData(provider).ToLower();
+                // Create filter conditions for product_type and status
+                var filter = Builders<PricePrepaid>.Filter.And(
+                    Builders<PricePrepaid>.Filter.Eq("product_type", "data"),
+                    Builders<PricePrepaid>.Filter.Eq("status", "active")
+                );
+                // Query the MongoDB collection with the filter conditions
+                var items = await dataUser.Find(filter).SortBy(p => p.product_nominal).ToListAsync();
+                // Filter the results based on product_code
+                var filteredProducts = items.Where(product =>
+                    product.product_code.Contains(operatorName)
+                ).ToList();
+                return new { code = 200, data = filteredProducts, message = "Data Add Complete", length = filteredProducts.Count };
             }
             catch (CustomException)
             {

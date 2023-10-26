@@ -36,12 +36,12 @@ namespace test_blazor.Server.Controllers
         }
 
         [HttpGet]
-        [Route("Get/{search}/{phone}")]
-        public async Task<object> Get([FromRoute] string search, string phone)
+        [Route("GetPulsa/{phone}")]
+        public async Task<object> GetPulsa([FromRoute]string phone)
         {
             try
             {
-                var data = await _IPricePrepaidService.Get(search, phone);
+                var data = await _IPricePrepaidService.GetPulsa( phone);
                 return Ok(data);
             }
             catch (CustomException ex)
@@ -51,6 +51,23 @@ namespace test_blazor.Server.Controllers
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
+        [HttpGet]
+        [Route("GetData/{phone}")]
+        public async Task<object> GetData([FromRoute]string phone)
+        {
+            try
+            {
+                var data = await _IPricePrepaidService.GetData(phone);
+                return Ok(data);
+            }
+            catch (CustomException ex)
+            {
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.ErrorHeader, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
+            }
+        }
+
 
     }
 }
