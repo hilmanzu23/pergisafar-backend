@@ -32,11 +32,11 @@ namespace RepositoryPattern.Services.UserService
         {
             try
             {
-                
+
                 var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (roleData == null)
                 {
-                    throw new CustomException(400, "Data NotFound");
+                    throw new CustomException(400, "Error", "Data NotFound");
                 }
                 roleData.FullName = item.FullName;
                 roleData.PhoneNumber = item.PhoneNumber;
@@ -46,18 +46,18 @@ namespace RepositoryPattern.Services.UserService
             }
             catch (CustomException)
             {
-                
+
                 throw;
             }
         }
         public async Task<object> Delete(string id)
         {
             try
-            {    
+            {
                 var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (roleData == null)
                 {
-                    throw new CustomException(400, "Data NotFound");
+                    throw new CustomException(400, "Error", "Data NotFound");
                 }
                 roleData.IsActive = true;
                 await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
@@ -65,7 +65,7 @@ namespace RepositoryPattern.Services.UserService
             }
             catch (CustomException)
             {
-                
+
                 throw;
             }
         }
@@ -77,7 +77,7 @@ namespace RepositoryPattern.Services.UserService
                 var items = await dataUser.Find(_ => _.Id == id).FirstOrDefaultAsync();
                 if (items == null)
                 {
-                    throw new CustomException(400, "Data tidak ditemukan silahkan login kembali");
+                    throw new CustomException(400, "Error", "Data tidak ditemukan silahkan login kembali");
                 }
                 var Role = await dataRole.Find(_ => _.Id == items.IdRole).FirstOrDefaultAsync();
                 return new
@@ -93,7 +93,7 @@ namespace RepositoryPattern.Services.UserService
             }
             catch (CustomException)
             {
-                
+
                 throw;
             }
         }

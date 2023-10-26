@@ -22,7 +22,7 @@ namespace RepositoryPattern.Services.BannerService
         public async Task<Object> Get()
         {
             try
-            {     
+            {
                 var items = await dataUser.Find(_ => _.IsActive == true).ToListAsync();
                 return new { code = 200, data = items, message = "Data Add Complete" };
             }
@@ -31,7 +31,7 @@ namespace RepositoryPattern.Services.BannerService
                 throw;
             }
         }
-        public async Task<object> Post(ImageUploadViewModel  model)
+        public async Task<object> Post(ImageUploadViewModel model)
         {
             try
             {
@@ -56,23 +56,25 @@ namespace RepositoryPattern.Services.BannerService
                     var user = await dataUser.Find(filter).SingleOrDefaultAsync();
                     if (user != null)
                     {
-                        throw new CustomException(400, "Nama sudah digunakan.");
+                        throw new CustomException(400, "Name", "Nama sudah digunakan.");
                     }
-                    
+
                     var BannerData = new Banner()
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Name = image.Name,
-                            Image = image.Id,
-                            IsActive = true,
-                            IsVerification = false,
-                            CreatedAt = DateTime.Now
-                        };
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = image.Name,
+                        Image = image.Id,
+                        IsActive = true,
+                        IsVerification = false,
+                        CreatedAt = DateTime.Now
+                    };
                     await dataImage.InsertOneAsync(image);
                     await dataUser.InsertOneAsync(BannerData);
                     return new { code = 200, id = BannerData.Id, message = "Data Add Complete" };
-                }else{
-                    throw new CustomException(400,"faild");
+                }
+                else
+                {
+                    throw new CustomException(400, "Error", "Failed");
                 }
             }
             catch (CustomException)
@@ -88,7 +90,7 @@ namespace RepositoryPattern.Services.BannerService
                 var BannerData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (BannerData == null)
                 {
-                    throw new CustomException(400,"Data Not Found");
+                    throw new CustomException(400, "Error", "Data Not Found");
                 }
                 BannerData.Name = item.Name;
                 await dataUser.ReplaceOneAsync(x => x.Id == id, BannerData);
@@ -106,7 +108,7 @@ namespace RepositoryPattern.Services.BannerService
                 var BannerData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (BannerData == null)
                 {
-                    throw new CustomException(400,"Data Not Found");
+                    throw new CustomException(400, "Error", "Data Not Found");
                 }
                 BannerData.IsActive = false;
                 await dataUser.ReplaceOneAsync(x => x.Id == id, BannerData);

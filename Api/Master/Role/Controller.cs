@@ -32,7 +32,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -50,12 +50,12 @@ namespace test_blazor.Server.Controllers
                     return BadRequest(errorResponse);
                 }
                 var data = await _IRoleService.Post(item);
-                return Ok(data);    
+                return Ok(data);
             }
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -78,7 +78,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -95,7 +95,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }

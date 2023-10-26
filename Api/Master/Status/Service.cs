@@ -18,7 +18,7 @@ namespace RepositoryPattern.Services.StatusService
         public async Task<Object> Get()
         {
             try
-            {     
+            {
                 var items = await dataUser.Find(_ => _.IsActive == true).ToListAsync();
                 return new { code = 200, data = items, message = "Data Add Complete" };
             }
@@ -35,16 +35,16 @@ namespace RepositoryPattern.Services.StatusService
                 var user = await dataUser.Find(filter).SingleOrDefaultAsync();
                 if (user != null)
                 {
-                    throw new CustomException(400, "Nama sudah digunakan.");
+                    throw new CustomException(400, "Error", "Nama sudah digunakan.");
                 }
                 var StatusData = new Status()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Name = item.Name,
-                        IsActive = true,
-                        IsVerification = false,
-                        CreatedAt = DateTime.Now
-                    };
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = item.Name,
+                    IsActive = true,
+                    IsVerification = false,
+                    CreatedAt = DateTime.Now
+                };
                 await dataUser.InsertOneAsync(StatusData);
                 return new { code = 200, id = StatusData.Id, message = "Data Add Complete" };
             }
@@ -61,7 +61,7 @@ namespace RepositoryPattern.Services.StatusService
                 var StatusData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (StatusData == null)
                 {
-                    throw new CustomException(400,"Data Not Found");
+                    throw new CustomException(400, "Error", "Data Not Found");
                 }
                 StatusData.Name = item.Name;
                 await dataUser.ReplaceOneAsync(x => x.Id == id, StatusData);
@@ -79,7 +79,7 @@ namespace RepositoryPattern.Services.StatusService
                 var StatusData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (StatusData == null)
                 {
-                    throw new CustomException(400,"Data Not Found");
+                    throw new CustomException(400, "Error", "Data Not Found");
                 }
                 StatusData.IsActive = false;
                 await dataUser.ReplaceOneAsync(x => x.Id == id, StatusData);

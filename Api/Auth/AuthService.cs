@@ -24,95 +24,64 @@ namespace RepositoryPattern.Services.AuthService
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
             IMongoDatabase database = client.GetDatabase("testprod");
             dataUser = database.GetCollection<User>("users");
-            // var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             this.key = configuration.GetSection("AppSettings")["JwtKey"];
             _emailService = emailService;
             _logger = logger;
         }
 
-        public string Authenticate(UserForm login, string? id)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var keys = Encoding.ASCII.GetBytes(key);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, id), // NOTE: this will be the "User.Identity.Name" value
-                    new Claim(JwtRegisteredClaimNames.Sub, id),
-                }),
-                Expires = DateTime.UtcNow.AddMonths(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keys), SecurityAlgorithms.HmacSha256Signature),
-                Issuer = "pergisafar.com",
-                Audience = "pergisafar.com",
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
 
-        public async Task<Object> LoginAsync([FromBody] UserForm login)
+
+        public async Task<Object> LoginAsync([FromBody] LoginDto login)
         {
             try
             {
-                if (!IsValidEmail(login.Email))
-                {
-                    throw new CustomException(400, "Format Email salah.");
-                }
-                if (login.Password.Length < 8)
-                {
-                    throw new CustomException(400, "Password harus 8 karakter");
-                }
                 var user = await dataUser.Find(u => u.Email == login.Email).FirstOrDefaultAsync();
                 if (user == null)
                 {
-                    throw new CustomException(400, "Email tidak ditemukan");
+                    throw new CustomException(400, "Email tidak ditemukan", user.Email);
                 }
                 bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(login.Password, user.Password);
                 if (!isPasswordCorrect)
                 {
-                    throw new CustomException(400, "Password Salah");
+                    throw new CustomException(400, "Password Salah", "Password");
                 }
                 if (user.IsActive == false)
                 {
-                    throw new CustomException(400, "Akun anda tidak perbolehkan akses");
+                    throw new CustomException(400, "Akun anda tidak perbolehkan akses", "Message");
                 }
                 if (user.IsVerification == false)
                 {
-                    throw new CustomException(400, "Akun anda belum aktif, silahkan aktifasi melalui link kami kirimkan di email anda");
+                    throw new CustomException(400, "Akun anda belum aktif, silahkan aktifasi melalui link kami kirimkan di email anda", "Message");
                 }
-                string token = Authenticate(login, user.Id);
+
+                var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
+                var jwtService = new JwtService(configuration);
+                string userId = user.Id;
+                string token = jwtService.GenerateJwtToken(userId);
                 string idAsString = user.Id.ToString();
                 return new { code = 200, id = idAsString, accessToken = token };
             }
             catch (CustomException ex)
             {
-                
+
                 throw;
             }
         }
 
-        public async Task<object> RegisterAsync([FromBody] UserRegisterCustomer data)
+        public async Task<object> RegisterAsync([FromBody] RegisterDto data)
         {
             try
             {
-                if (!IsValidEmail(data.Email))
-                {
-                    throw new CustomException(400, "Format Email Salah");
-                }
-                if (data.Password.Length < 8)
-                {
-                    throw new CustomException(400, "Password Harus Lebih 8 Karakter");
-                }
                 var user = await dataUser.Find(u => u.Email == data.Email).FirstOrDefaultAsync();
 
                 if (user != null)
                 {
-                    throw new CustomException(400, "Email Sudah digunakan");
+                    throw new CustomException(400, "Email Sudah digunakan", "Email");
                 }
                 var phonenumber = await dataUser.Find(u => u.PhoneNumber == data.PhoneNumber).FirstOrDefaultAsync();
                 if (phonenumber != null)
                 {
-                    throw new CustomException(400, "Ponsel Sudah digunakan");
+                    throw new CustomException(400, "Ponsel Sudah digunakan", "Ponsel");
                 }
 
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(data.Password);
@@ -145,39 +114,39 @@ namespace RepositoryPattern.Services.AuthService
                 var sending = _emailService.SendingEmail(email);
                 return new
                 {
-                    success = true,
+                    code = 200,
                     message = "pendaftaran berhasil silahkan cek email untuk melakukan aktifasi",
                     id = roleIdAsString
                 };
             }
             catch (CustomException ex)
             {
-                
+
                 throw;
             }
         }
 
-        public async Task<object> UpdatePassword(string id, UpdatePasswordForm item)
+        public async Task<object> UpdatePassword(string id, UpdatePasswordDto item)
         {
             try
             {
                 var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (roleData == null)
                 {
-                    throw new CustomException(400, "Data tidak ada");
+                    throw new CustomException(400, "Data tidak ada", "Error");
                 }
                 if (item.Password.Length < 8)
                 {
-                    throw new CustomException(400, "Password harus 8 karakter");
+                    throw new CustomException(400, "Password harus 8 karakter", "Password");
                 }
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(item.Password);
                 roleData.Password = hashedPassword;
                 await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
-                return new { success = true, id = roleData.Id.ToString() };
+                return new { code = 200, id = roleData.Id.ToString(), message = "Update Password Berhasil" };
             }
             catch (CustomException ex)
             {
-                
+
                 throw;
             }
         }
@@ -190,7 +159,7 @@ namespace RepositoryPattern.Services.AuthService
                 var roleData = await dataUser.Find(x => x.Email == id).FirstOrDefaultAsync();
                 if (roleData == null)
                 {
-                    throw new CustomException(400, "Data not found");
+                    throw new CustomException(400, "Data not found", "Email");
                 }
                 Random random = new Random();
                 string otp = random.Next(10000, 99999).ToString();
@@ -203,81 +172,45 @@ namespace RepositoryPattern.Services.AuthService
                 var sending = _emailService.SendingEmail(email);
                 roleData.Otp = otp;
                 await dataUser.ReplaceOneAsync(x => x.Email == id, roleData);
-                return new { success = true, id = roleData.Id.ToString() };
+                return new { code = 200, id = roleData.Id.ToString(), message = "Berhasil" };
             }
             catch (CustomException ex)
             {
-                
+
                 throw;
             }
         }
 
-        public async Task<object> VerifyOtp(string id, OtpForm otp)
+        public async Task<object> VerifyOtp(string id, OtpDto otp)
         {
             try
             {
                 var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (roleData == null)
                 {
-                    throw new CustomException(400, "Data not found");
+                    throw new CustomException(400, "Data not found", "Error");
                 }
                 if (roleData.Otp != otp.Otp)
                 {
-                    throw new CustomException(400, "Otp anda salah");
+                    throw new CustomException(400, "Otp anda salah", "Error");
                 }
-                var data = new UserForm();
+                var data = new LoginDto();
                 {
                     data.Email = roleData.Email;
                 }
-                string token = Authenticate(data, roleData.Id);
-                return new { success = true, id = roleData.Id.ToString(), accessToken = token };
+                var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
+                var jwtService = new JwtService(configuration);
+                string userId = roleData.Id;
+                string token = jwtService.GenerateJwtToken(userId);
+                return new { code = 200, id = roleData.Id.ToString(), accessToken = token, message = "Berhasil" };
             }
             catch (CustomException ex)
             {
-                
+
                 throw;
             }
         }
 
-        public class UserForm
-        {
-            public string? Email { get; set; }
-            public string? Password { get; set; }
-        }
-
-        public class UserRegisterCustomer
-        {
-            public string? Email { get; set; }
-            public string? FullName { get; set; }
-            public string? PhoneNumber { get; set; }
-            public string? Password { get; set; }
-        }
-
-        public class UpdatePasswordForm
-        {
-            public string? Password { get; set; }
-            public string? ConfirmPassword { get; set; }
-
-        }
-
-        public class OtpForm
-        {
-            public string? Otp { get; set; }
-
-        }
-
-        private bool IsValidEmail(string email)
-        {
-            try
-            {
-                var addr = new System.Net.Mail.MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
-        }
 
         public async Task<object> Aktifasi(string id)
         {
@@ -286,15 +219,15 @@ namespace RepositoryPattern.Services.AuthService
                 var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (roleData == null)
                 {
-                    throw new CustomException(400, "Data not found");
+                    throw new CustomException(400, "Data not found", "Error");
                 }
                 roleData.IsVerification = true;
                 await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
-                return new { success = true, id = roleData.Id.ToString(), message = "Email berhasil di verifikasi" };
+                return new { code = 200, id = roleData.Id.ToString(), message = "Email berhasil di verifikasi" };
             }
             catch (CustomException ex)
             {
-                
+
                 throw;
             }
         }

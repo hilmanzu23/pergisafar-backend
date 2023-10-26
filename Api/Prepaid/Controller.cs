@@ -30,14 +30,14 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
 
         [HttpGet]
         [Route("Get/{search}/{provider}")]
-        public async Task<object> Get([FromRoute]string search, string provider)
+        public async Task<object> Get([FromRoute] string search, string provider)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }

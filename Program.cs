@@ -16,6 +16,8 @@ using RepositoryPattern.Services.TransactionService;
 using RepositoryPattern.Services.StatusService;
 using System.Net;
 using RepositoryPattern.Services.PricePrepaidService;
+using man_power_planning.Shared.ViewModels;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +37,8 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ITransactionsTypeService, TransactionsTypeService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<IPricePrepaidService, PricePrepaidService>();
+builder.Services.AddScoped<ValidationAuthDto>();
+
 
 
 builder.Services.AddScoped<ITransactionService, TransactionService>();
@@ -120,30 +124,18 @@ app.UseStaticFiles();
 app.Use(async (context, next) =>
     {
         await next();
-     
+
         if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized) // 401
         {
             context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(new ErrorDto()
+
+            var viewModel = new
             {
                 code = 401,
-                errorMessage = new List<ErrorMessageItem>
-                {
-                    new ErrorMessageItem { error = "UnAuthorized" }
-                }
-            }.ToString());
-        }
-        if (context.Response.StatusCode == (int)HttpStatusCode.InternalServerError) // 500
-        {
-            context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(new ErrorDto()
-            {
-                code = 500,
-                errorMessage = new List<ErrorMessageItem>
-                {
-                    new ErrorMessageItem { error = "Data tidak ditemukan silahkan login kembali" }
-                }
-            }.ToString());
+                errorMessage = new ErrorDtoVM { error = MessageReport.Unauthorized }
+            };
+            var json = JsonSerializer.Serialize(viewModel);
+            await context.Response.WriteAsync(json);
         }
     });
 app.UseAuthentication();

@@ -28,7 +28,7 @@ namespace RepositoryPattern.Services.TransactionService
         public async Task<Object> Get()
         {
             try
-            {     
+            {
                 var items = await dataUser.Find(_ => _.IsActive == true).ToListAsync();
                 return new { code = 200, data = items, message = "Data Add Complete" };
             }
@@ -42,9 +42,9 @@ namespace RepositoryPattern.Services.TransactionService
         {
             try
             {
-                
-                List<Transaction>  items = await dataUser.Find(x=> x.IdUser == id).ToListAsync();
-                List<Transaction>  filtered = await dataUser.Find(x=> x.IdUser == id & x.IdTransactions == idStatus).ToListAsync();
+
+                List<Transaction> items = await dataUser.Find(x => x.IdUser == id).ToListAsync();
+                List<Transaction> filtered = await dataUser.Find(x => x.IdUser == id & x.IdTransactions == idStatus).ToListAsync();
                 List<TransactionViewDto> newArray = new List<TransactionViewDto>();
                 foreach (Transaction file in idStatus == "-" ? items : filtered)
                 {
@@ -66,7 +66,7 @@ namespace RepositoryPattern.Services.TransactionService
                 }
                 return new { code = 200, data = newArray, message = "Data Add Complete" };
             }
-           catch (CustomException)
+            catch (CustomException)
             {
                 throw;
             }
@@ -104,7 +104,7 @@ namespace RepositoryPattern.Services.TransactionService
                 var TransactionData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (TransactionData == null)
                 {
-                    throw new CustomException(400,"Data Not Found");
+                    throw new CustomException(400, "Error", "Data Not Found");
                 }
                 TransactionData.IsVerification = true;
                 await dataUser.ReplaceOneAsync(x => x.Id == id, TransactionData);
@@ -122,7 +122,7 @@ namespace RepositoryPattern.Services.TransactionService
                 var TransactionData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (TransactionData == null)
                 {
-                    throw new CustomException(400,"Data Not Found");
+                    throw new CustomException(400, "Error", "Data Not Found");
                 }
                 TransactionData.IsActive = false;
                 await dataUser.ReplaceOneAsync(x => x.Id == id, TransactionData);

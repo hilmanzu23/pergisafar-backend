@@ -12,27 +12,44 @@ namespace test_blazor.Server.Controllers
         private readonly IAuthService _IAuthService;
         private readonly ConvertJWT _ConvertJwt;
         private readonly ErrorHandlingUtility _errorUtility;
-        public AuthController(IAuthService authService, ConvertJWT convert)
+
+        private readonly ValidationAuthDto _masterValidationService;
+        public AuthController(IAuthService authService, ConvertJWT convert, ValidationAuthDto MasterValidationService)
         {
             _IAuthService = authService;
             _ConvertJwt = convert;
             _errorUtility = new ErrorHandlingUtility();
+            _masterValidationService = MasterValidationService;
         }
 
         [AllowAnonymous]
         [HttpPost]
         [Route("Auth/Login")]
-        public async Task<object> LoginAsync([FromBody] UserForm login)
+        public async Task<object> LoginAsync([FromBody] LoginDto login)
         {
             try
             {
+                var validationErrors = _masterValidationService.ValidateLogin(login);
+                if (validationErrors.Count > 0)
+                {
+                    var errorResponse = new { code = 400, errorMessage = validationErrors };
+                    return BadRequest(errorResponse);
+                }
+                if (!IsValidEmail(login.Email))
+                {
+                    throw new CustomException(400, "Email", "Format Email Salah");
+                }
+                if (login.Password.Length < 8)
+                {
+                    throw new CustomException(400, "Password", "Password Harus Lebih 8 Karakter");
+                }
                 var response = await _IAuthService.LoginAsync(login);
                 return Ok(response);
             }
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -40,14 +57,17 @@ namespace test_blazor.Server.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("Auth/Register")]
-        public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterCustomer login)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterDto login)
         {
             try
             {
-                if (string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.FullName) || string.IsNullOrEmpty(login.PhoneNumber) || string.IsNullOrEmpty(login.Password))
+                if (!IsValidEmail(login.Email))
                 {
-                    var errorResponse = new ErrorResponse(400, "Data tidak boleh kosong");
-                    return _errorUtility.HandleError(400, errorResponse);
+                    throw new CustomException(400, "Email", "Format Email salah.");
+                }
+                if (login.Password.Length < 8)
+                {
+                    throw new CustomException(400, "Password", "Password harus 8 karakter");
                 }
                 var dataList = await _IAuthService.RegisterAsync(login);
                 return Ok(dataList);
@@ -55,7 +75,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -63,7 +83,7 @@ namespace test_blazor.Server.Controllers
         [Authorize]
         [HttpPost]
         [Route("Auth/UpdatePassword")]
-        public async Task<object> UpdatePassword([FromBody] UpdatePasswordForm item)
+        public async Task<object> UpdatePassword([FromBody] UpdatePasswordDto item)
         {
             try
             {
@@ -71,7 +91,7 @@ namespace test_blazor.Server.Controllers
                 string idUser = await _ConvertJwt.ConvertString(accessToken);
                 if (item.Password != item.ConfirmPassword)
                 {
-                    throw new CustomException(400, "Password tidak sama");
+                    throw new CustomException(400, "Password", "Password tidak sama");
                 }
                 var dataList = await _IAuthService.UpdatePassword(idUser, item);
                 return Ok(dataList);
@@ -79,7 +99,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -87,7 +107,7 @@ namespace test_blazor.Server.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("Auth/VerifyOtp/{id}")]
-        public async Task<object> VerifyOtp([FromRoute] string id, [FromBody] OtpForm otp)
+        public async Task<object> VerifyOtp([FromRoute] string id, [FromBody] OtpDto otp)
         {
             try
             {
@@ -97,7 +117,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -115,7 +135,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -133,7 +153,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -148,15 +168,28 @@ namespace test_blazor.Server.Controllers
                 var claims = User.Claims;
                 if (claims == null)
                 {
-                    return new CustomException(400, "Opss");
+                    return new CustomException(400, "Error", "Unauthorized");
                 }
-                return new { success = true, message = "Masih Berlaku" };
+                return new { code = 200, message = "Masih Berlaku" };
             }
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
+            }
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

@@ -28,7 +28,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -39,14 +39,14 @@ namespace test_blazor.Server.Controllers
         public async Task<object> Post([FromForm] ImageUploadViewModel model)
         {
             try
-            {  
+            {
                 var data = await _IBannerService.Post(model);
-                return Ok(data);    
+                return Ok(data);
             }
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -69,7 +69,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -86,7 +86,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }

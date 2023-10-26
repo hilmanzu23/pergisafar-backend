@@ -93,7 +93,7 @@ namespace RepositoryPattern.Services.PaymentService
                 {
                     byte[] hashBytes = md5.ComputeHash(dataBytes);
                     string hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-                Console.WriteLine(hash);
+                    Console.WriteLine(hash);
                     string apiUrl = "https://sandbox.duitku.com/webapi/api/merchant/v2/inquiry";
 
                     var requestData = new
@@ -148,13 +148,13 @@ namespace RepositoryPattern.Services.PaymentService
                     else
                     {
                         // Handle the error response here.
-                        throw new CustomException(400,"Gagal");
+                        throw new CustomException(400, "Error", "Gagal");
                     }
-                }  
+                }
             }
             catch (CustomException)
             {
-                
+
                 throw;
             }
         }

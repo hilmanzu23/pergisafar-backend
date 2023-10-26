@@ -18,7 +18,7 @@ namespace RepositoryPattern.Services.SettingService
         public async Task<Object> Get()
         {
             try
-            {     
+            {
                 var items = await dataUser.Find(_ => _.IsActive == true).ToListAsync();
                 return new { code = 200, data = items, message = "Data Add Complete" };
             }
@@ -35,17 +35,17 @@ namespace RepositoryPattern.Services.SettingService
                 var user = await dataUser.Find(filter).SingleOrDefaultAsync();
                 if (user != null)
                 {
-                    throw new CustomException(400, "Key sudah digunakan.");
+                    throw new CustomException(400, "Error", "Key sudah digunakan.");
                 }
                 var roleData = new Setting()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Key = item.Key,
-                        Value = item.Value,
-                        IsActive = true,
-                        IsVerification = false,
-                        CreatedAt = DateTime.Now
-                    };
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Key = item.Key,
+                    Value = item.Value,
+                    IsActive = true,
+                    IsVerification = false,
+                    CreatedAt = DateTime.Now
+                };
                 await dataUser.InsertOneAsync(roleData);
                 return new { code = 200, id = roleData.Id, message = "Data Add Complete" };
             }
@@ -62,7 +62,7 @@ namespace RepositoryPattern.Services.SettingService
                 var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (roleData == null)
                 {
-                    throw new CustomException(400,"Data Not Found");
+                    throw new CustomException(400, "Error", "Data Not Found");
                 }
                 roleData.Key = item.Key;
                 roleData.Value = item.Value;
@@ -81,7 +81,7 @@ namespace RepositoryPattern.Services.SettingService
                 var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (roleData == null)
                 {
-                    throw new CustomException(400,"Data Not Found");
+                    throw new CustomException(400, "Error", "Data Not Found");
                 }
                 roleData.IsActive = false;
                 await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);

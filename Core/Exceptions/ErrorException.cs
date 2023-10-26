@@ -3,17 +3,14 @@ using System.Text.Json;
 public class ErrorResponse
 {
     public int Code { get; set; }
-    public List<ErrorMessageItem> ErrorMessage { get; set; }
+    public IDictionary<string, string> ErrorMessage { get; set; }
 
-    public ErrorResponse(int errorCode, string errorMessage)
+    public ErrorResponse(int errorCode, string errorMessage, string errorHeader)
     {
         Code = errorCode;
-        ErrorMessage = new List<ErrorMessageItem>
+        ErrorMessage = new Dictionary<string, string>
         {
-            new ErrorMessageItem
-            {
-                error = errorMessage
-            }
+            { errorHeader, errorMessage }
         };
     }
 }
@@ -26,8 +23,8 @@ public class ErrorMessageItem
 public class ErrorDto
 {
     public int code { get; set; }
-    public List<ErrorMessageItem> errorMessage { get; set; }
-    
+    public ErrorMessageItem errorMessage { get; set; }
+
     public override string ToString()
     {
         return JsonSerializer.Serialize(this);

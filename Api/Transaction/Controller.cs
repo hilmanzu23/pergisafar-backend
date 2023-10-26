@@ -29,23 +29,23 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
 
         [HttpGet("ByUser/{id}/{idStatus}")]
-        public async Task<object> GetUserId([FromRoute]string id,string idStatus)
+        public async Task<object> GetUserId([FromRoute] string id, string idStatus)
         {
             try
             {
-                var data = await _ITransactionService.GetId(id,idStatus);
+                var data = await _ITransactionService.GetId(id, idStatus);
                 return Ok(data);
             }
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -57,12 +57,12 @@ namespace test_blazor.Server.Controllers
             try
             {
                 var data = await _ITransactionService.Post(item);
-                return Ok(data);    
+                return Ok(data);
             }
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -79,7 +79,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -96,7 +96,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
