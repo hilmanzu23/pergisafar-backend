@@ -5,7 +5,7 @@ public class ErrorResponse
     public int Code { get; set; }
     public IDictionary<string, string> ErrorMessage { get; set; }
 
-    public ErrorResponse(int errorCode, string errorMessage, string errorHeader)
+    public ErrorResponse(int errorCode, string errorHeader, string errorMessage)
     {
         Code = errorCode;
         ErrorMessage = new Dictionary<string, string>

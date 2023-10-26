@@ -30,7 +30,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
+                var errorResponse = new ErrorResponse(errorCode, ex.ErrorHeader, ex.Message);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
@@ -47,7 +47,7 @@ namespace test_blazor.Server.Controllers
             catch (CustomException ex)
             {
                 int errorCode = ex.ErrorCode;
-                var errorResponse = new ErrorResponse(errorCode, ex.Message, ex.ErrorHeader);
+                var errorResponse = new ErrorResponse(errorCode, ex.ErrorHeader, ex.Message);
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }

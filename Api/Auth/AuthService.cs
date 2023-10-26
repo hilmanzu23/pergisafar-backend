@@ -38,20 +38,20 @@ namespace RepositoryPattern.Services.AuthService
                 var user = await dataUser.Find(u => u.Email == login.Email).FirstOrDefaultAsync();
                 if (user == null)
                 {
-                    throw new CustomException(400, "Email tidak ditemukan", user.Email);
+                    throw new CustomException(400, "Email", "Email tidak ditemukan");
                 }
                 bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(login.Password, user.Password);
                 if (!isPasswordCorrect)
                 {
-                    throw new CustomException(400, "Password Salah", "Password");
+                    throw new CustomException(400, "Password", "Password Salah");
                 }
                 if (user.IsActive == false)
                 {
-                    throw new CustomException(400, "Akun anda tidak perbolehkan akses", "Message");
+                    throw new CustomException(400, "Message", "Akun anda tidak perbolehkan akses");
                 }
                 if (user.IsVerification == false)
                 {
-                    throw new CustomException(400, "Akun anda belum aktif, silahkan aktifasi melalui link kami kirimkan di email anda", "Message");
+                    throw new CustomException(400, "Message", "Akun anda belum aktif, silahkan aktifasi melalui link kami kirimkan di email anda");
                 }
 
                 var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
@@ -76,12 +76,12 @@ namespace RepositoryPattern.Services.AuthService
 
                 if (user != null)
                 {
-                    throw new CustomException(400, "Email Sudah digunakan", "Email");
+                    throw new CustomException(400, "Email", "Email Sudah digunakan");
                 }
                 var phonenumber = await dataUser.Find(u => u.PhoneNumber == data.PhoneNumber).FirstOrDefaultAsync();
                 if (phonenumber != null)
                 {
-                    throw new CustomException(400, "Ponsel Sudah digunakan", "Ponsel");
+                    throw new CustomException(400, "Ponsel", "Ponsel Sudah digunakan");
                 }
 
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(data.Password);
@@ -133,11 +133,11 @@ namespace RepositoryPattern.Services.AuthService
                 var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (roleData == null)
                 {
-                    throw new CustomException(400, "Data tidak ada", "Error");
+                    throw new CustomException(400, "Error", "Data tidak ada");
                 }
                 if (item.Password.Length < 8)
                 {
-                    throw new CustomException(400, "Password harus 8 karakter", "Password");
+                    throw new CustomException(400, "Password", "Password harus 8 karakter");
                 }
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(item.Password);
                 roleData.Password = hashedPassword;
@@ -159,7 +159,7 @@ namespace RepositoryPattern.Services.AuthService
                 var roleData = await dataUser.Find(x => x.Email == id).FirstOrDefaultAsync();
                 if (roleData == null)
                 {
-                    throw new CustomException(400, "Data not found", "Email");
+                    throw new CustomException(400, "Email", "Data not found");
                 }
                 Random random = new Random();
                 string otp = random.Next(10000, 99999).ToString();
@@ -188,11 +188,11 @@ namespace RepositoryPattern.Services.AuthService
                 var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (roleData == null)
                 {
-                    throw new CustomException(400, "Data not found", "Error");
+                    throw new CustomException(400, "Error", "Data not found");
                 }
                 if (roleData.Otp != otp.Otp)
                 {
-                    throw new CustomException(400, "Otp anda salah", "Error");
+                    throw new CustomException(400, "Error", "Otp anda salah");
                 }
                 var data = new LoginDto();
                 {
@@ -219,7 +219,7 @@ namespace RepositoryPattern.Services.AuthService
                 var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (roleData == null)
                 {
-                    throw new CustomException(400, "Data not found", "Error");
+                    throw new CustomException(400, "Error", "Data not found");
                 }
                 roleData.IsVerification = true;
                 await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
