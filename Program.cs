@@ -39,8 +39,6 @@ builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<IPricePrepaidService, PricePrepaidService>();
 builder.Services.AddScoped<ValidationAuthDto>();
 
-
-
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 builder.Services.AddScoped<IBannerService, BannerService>();

@@ -32,9 +32,10 @@ namespace RepositoryPattern.Services.PricePrepaidService
         public async Task<Object> Get(string search, string provider)
         {
             try
-            {     
-                var items = await dataUser.Find(_ => _.product_type == search & _.product_description == provider & _.status == "active").ToListAsync();
-                return new { code = 200, data = items, message = "Data Add Complete", length= items.Count };
+            {   
+                string operatorName = OperatorChecker.GetOperatorName(provider).ToLower();
+                var items = await dataUser.Find(_ => _.product_type == search & _.product_description == operatorName & _.status == "active").Sort(Builders<PricePrepaid>.Sort.Ascending("product_nominal")).ToListAsync();
+                return new { code = 200, data = items, message = "Data Add Complete", length = items.Count };
             }
             catch (CustomException)
             {

@@ -36,12 +36,12 @@ namespace test_blazor.Server.Controllers
         }
 
         [HttpGet]
-        [Route("Get/{search}/{provider}")]
-        public async Task<object> Get([FromRoute] string search, string provider)
+        [Route("Get/{search}/{phone}")]
+        public async Task<object> Get([FromRoute] string search, string phone)
         {
             try
             {
-                var data = await _IPricePrepaidService.Get(search, provider);
+                var data = await _IPricePrepaidService.Get(search, phone);
                 return Ok(data);
             }
             catch (CustomException ex)
