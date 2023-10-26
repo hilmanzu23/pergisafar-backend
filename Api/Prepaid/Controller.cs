@@ -19,12 +19,29 @@ namespace test_blazor.Server.Controllers
 
         // [Authorize]
         [HttpGet]
-        [Route("GetPriceList")]
-        public async Task<object> Get()
+        [Route("RefreshPrepaidPrice")]
+        public async Task<object> RefreshData()
         {
             try
             {
-                var data = await _IPricePrepaidService.Get();
+                var data = await _IPricePrepaidService.RefreshData();
+                return Ok(data);
+            }
+            catch (CustomException ex)
+            {
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
+            }
+        }
+
+        [HttpGet]
+        [Route("Get/{search}/{provider}")]
+        public async Task<object> Get([FromRoute]string search, string provider)
+        {
+            try
+            {
+                var data = await _IPricePrepaidService.Get(search, provider);
                 return Ok(data);
             }
             catch (CustomException ex)

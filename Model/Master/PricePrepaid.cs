@@ -4,11 +4,15 @@ namespace pergisafar.Shared.Models
 {
     public class PricePrepaid : BaseModel
     {
+
         [BsonId]
         public string? Id { get; set; }
 
         [BsonElement("product_description")]
         public string? product_description { get; set; }
+
+        [BsonElement("product_code")]
+        public string? product_code { get; set; }
 
         [BsonElement("product_nominal")]
         public string? product_nominal { get; set; }

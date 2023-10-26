@@ -5,5 +5,7 @@ using static test_blazor.Server.Controllers.RoleController;
 
 public interface IPricePrepaidService
 {
-    Task<Object> Get();
+    Task<Object> RefreshData();
+    Task<Object> Get(string search, string provider);
+
 }

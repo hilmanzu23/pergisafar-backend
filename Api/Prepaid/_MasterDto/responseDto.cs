@@ -9,6 +9,9 @@ namespace pergisafar.Shared.Models
 
         [BsonElement("product_nominal")]
         public string? product_nominal { get; set; }
+        
+        [BsonElement("product_code")]
+        public string? product_code { get; set; }
 
         [BsonElement("product_details")]
         public string? product_details { get; set; }
