@@ -69,6 +69,7 @@ namespace test_blazor.Server.Controllers
                 {
                     throw new CustomException(400, "Password", "Password harus 8 karakter");
                 }
+                GlobalValidator.PhoneValidator(login.PhoneNumber);
                 var dataList = await _IAuthService.RegisterAsync(login);
                 return Ok(dataList);
             }

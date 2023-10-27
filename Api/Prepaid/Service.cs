@@ -1,5 +1,5 @@
+
 using System.Text;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using pergisafar.Shared.Models;
@@ -30,23 +30,40 @@ namespace RepositoryPattern.Services.PricePrepaidService
             this.endpointDev = configuration.GetSection("IAKSettings")["EndPointDev"];
         }
 
-        public async Task<Object> GetPulsa(string provider)
+        public async Task<Object> GetPulsa(string phone)
         {
             try
             {   
-                string operatorName = OperatorChecker.GetOperatorNamePulsa(provider).ToLower();
+                string operatorName = OperatorChecker.GetOperatorNamePulsa(phone).ToLower();
+                if(operatorName == "other operator")
+                {
+                    throw new CustomException(400,"error","nomor ini belum ada penawaran");
+                }
                 // Create filter conditions for product_type and status
                 var filter = Builders<PricePrepaid>.Filter.And(
                     Builders<PricePrepaid>.Filter.Eq("product_type", "pulsa"),
                     Builders<PricePrepaid>.Filter.Eq("status", "active")
                 );
                 // Query the MongoDB collection with the filter conditions
-                var items = await dataUser.Find(filter).SortBy(p => p.product_nominal).ToListAsync();
+                var items = await dataUser.Find(filter).ToListAsync();
                 // Filter the results based on product_code
-                var filteredProducts = items.Where(product =>
-                    product.product_code.Contains(operatorName)
-                ).ToList();
-                return new { code = 200, data = filteredProducts, message = "Data Add Complete", length = filteredProducts.Count };
+                var filteredProducts = items.Where(product => product.product_code.Contains(operatorName)).ToList();
+                var sortedItems = filteredProducts.Select(p => new
+                {
+                    id = p.Id,
+                    product_nominal = p.product_nominal,
+                    product_code = p.product_code,
+                    product_description = p.product_description,
+                    product_details = p.product_details,
+                    product_price = Convert.ToInt32(p.product_price),
+                    product_type = p.product_type,
+                    status = p.status,
+                    icon_url = p.icon_url,
+                    product_category = p.product_category,
+                })
+                .OrderBy(p => p.product_price)
+                .ToList();
+                return new { code = 200, data = sortedItems, message = "Data Add Complete", length = sortedItems.Count };
             }
             catch (CustomException)
             {
@@ -54,23 +71,40 @@ namespace RepositoryPattern.Services.PricePrepaidService
             }
         }
 
-        public async Task<Object> GetData(string provider)
+        public async Task<Object> GetData(string phone)
         {
             try
             {   
-                string operatorName = OperatorChecker.GetOperatorNameData(provider).ToLower();
+                string operatorName = OperatorChecker.GetOperatorNameData(phone).ToLower();
+                if(operatorName == "other operator")
+                {
+                    throw new CustomException(400,"error","nomor ini belum ada penawaran");
+                }
                 // Create filter conditions for product_type and status
                 var filter = Builders<PricePrepaid>.Filter.And(
                     Builders<PricePrepaid>.Filter.Eq("product_type", "data"),
                     Builders<PricePrepaid>.Filter.Eq("status", "active")
                 );
                 // Query the MongoDB collection with the filter conditions
-                var items = await dataUser.Find(filter).SortBy(p => p.product_nominal).ToListAsync();
+                var items = await dataUser.Find(filter).ToListAsync();
                 // Filter the results based on product_code
-                var filteredProducts = items.Where(product =>
-                    product.product_code.Contains(operatorName)
-                ).ToList();
-                return new { code = 200, data = filteredProducts, message = "Data Add Complete", length = filteredProducts.Count };
+                var filteredProducts = items.Where(product => product.product_code.Contains(operatorName)).ToList();
+                var sortedItems = filteredProducts.Select(p => new
+                {
+                    id = p.Id,
+                    product_nominal = p.product_nominal,
+                    product_code = p.product_code,
+                    product_description = p.product_description,
+                    product_details = p.product_details,
+                    product_price = Convert.ToInt32(p.product_price),
+                    product_type = p.product_type,
+                    status = p.status,
+                    icon_url = p.icon_url,
+                    product_category = p.product_category,
+                })
+                .OrderBy(p => p.product_price)
+                .ToList();
+                return new { code = 200, data = sortedItems, message = "Data Add Complete", length = sortedItems.Count };
             }
             catch (CustomException)
             {
@@ -79,12 +113,15 @@ namespace RepositoryPattern.Services.PricePrepaidService
         }
         public async Task<Object> RefreshData()
         {
+            var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
+            var CreateSha = new CreateSha(configuration);
+            string signature = CreateSha.md5Conv("pl");
             var httpClient = new HttpClient();
             var parameters = new Dictionary<string, string>
             {
                 { "status", "all" },
                 { "username", username },
-                { "sign", sign },
+                { "sign", signature },
             };
             var json = JsonConvert.SerializeObject(parameters);
             try
@@ -122,6 +159,13 @@ namespace RepositoryPattern.Services.PricePrepaidService
         public class YourResponseType
         {
             public Data data { get; set; }
+        }
+
+        public class CheckOPT
+        {
+            public string message { get; set; }
+            public string rc { get; set; }
+
         }
 
         public class Data

@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryPattern.Services.PricePrepaidService;
 
@@ -41,7 +42,8 @@ namespace test_blazor.Server.Controllers
         {
             try
             {
-                var data = await _IPricePrepaidService.GetPulsa( phone);
+                GlobalValidator.PhoneValidator(phone);
+                var data = await _IPricePrepaidService.GetPulsa(phone);
                 return Ok(data);
             }
             catch (CustomException ex)
@@ -51,13 +53,15 @@ namespace test_blazor.Server.Controllers
                 return _errorUtility.HandleError(errorCode, errorResponse);
             }
         }
+
         [HttpGet]
         [Route("GetData/{phone}")]
         public async Task<object> GetData([FromRoute]string phone)
         {
             try
             {
-                var data = await _IPricePrepaidService.GetData(phone);
+                GlobalValidator.PhoneValidator(phone);
+                var data = await _IPricePrepaidService.GetData( phone);
                 return Ok(data);
             }
             catch (CustomException ex)
