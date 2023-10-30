@@ -189,6 +189,43 @@ namespace RepositoryPattern.Services.PricePrepaidService
             }
         }
 
+        public async Task<Object> GetGame(string product_description)
+        {
+            try
+            {
+                // Create filter conditions for product_type and status
+                var filter = Builders<PricePrepaid>.Filter.And(
+                    Builders<PricePrepaid>.Filter.Eq("product_description", product_description),
+                    Builders<PricePrepaid>.Filter.Eq("product_type", "game"),
+                    Builders<PricePrepaid>.Filter.Eq("status", "active")
+                );
+                // Query the MongoDB collection with the filter conditions
+                var items = await dataUser.Find(filter).ToListAsync();
+                // Filter the results based on product_code
+                var filteredProducts = items.ToList();
+                var sortedItems = filteredProducts.Select(p => new
+                {
+                    id = p.Id,
+                    product_nominal = p.product_nominal,
+                    product_code = p.product_code,
+                    product_description = p.product_description,
+                    product_details = p.product_details,
+                    product_price = Convert.ToInt32(p.product_price),
+                    product_type = p.product_type,
+                    status = p.status,
+                    icon_url = p.icon_url,
+                    product_category = p.product_category,
+                })
+                .OrderBy(p => p.product_price)
+                .ToList();
+                return new { code = 200, data = sortedItems, message = "Data Add Complete", length = sortedItems.Count };
+            }
+            catch (CustomException)
+            {
+                throw;
+            }
+        }
+
         public async Task<Object> checkCustomerPln(string customer)
         {
             var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();

@@ -50,16 +50,6 @@ C:\Users\90123259\CodeHilmanzu\pergisafar-web\obj\Release\net6.0\pergisafar-web.
 C:\Users\90123259\CodeHilmanzu\pergisafar-web\obj\Release\net6.0\pergisafar-web.pdb
 C:\Users\90123259\CodeHilmanzu\pergisafar-web\obj\Release\net6.0\pergisafar-web.genruntimeconfig.cache
 C:\Users\90123259\CodeHilmanzu\pergisafar-web\obj\Release\net6.0\ref\pergisafar-web.dll
-C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\appsettings.Development.json
-C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\appsettings.json
-C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\pergisafar-web.deps.json
-C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\pergisafar-web.runtimeconfig.json
-C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\web.config
-C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\web.config
-C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\appsettings.Development.json
-C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\appsettings.json
-C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\pergisafar-web.deps.json
-C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\publish\publish\pergisafar-web.runtimeconfig.json
 E:\Dev\pergisafar-backend\bin\Release\net6.0\appsettings.Development.json
 E:\Dev\pergisafar-backend\bin\Release\net6.0\appsettings.json
 E:\Dev\pergisafar-backend\bin\Release\net6.0\pergisafar-web.exe
@@ -118,3 +108,4 @@ E:\Dev\pergisafar-backend\obj\Release\net6.0\pergisafar-web.xml
 E:\Dev\pergisafar-backend\obj\Release\net6.0\pergisafar-web.pdb
 E:\Dev\pergisafar-backend\obj\Release\net6.0\pergisafar-web.genruntimeconfig.cache
 E:\Dev\pergisafar-backend\obj\Release\net6.0\ref\pergisafar-web.dll
+C:\Users\90123259\CodeHilmanzu\pergisafar-web\bin\Release\net6.0\SixLabors.ImageSharp.dll

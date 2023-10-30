@@ -10,5 +10,7 @@ public interface IPricePrepaidService
     Task<Object> GetData(string phone);
     Task<Object> GetPln(string notoken);
     Task<Object> GetEmoney(string notoken);
+    Task<Object> GetGame(string notoken);
+
 
 }
