@@ -38,7 +38,7 @@ namespace test_blazor.Server.Controllers
 
         [HttpGet]
         [Route("GetPulsa/{phone}")]
-        public async Task<object> GetPulsa([FromRoute]string phone)
+        public async Task<object> GetPulsa([FromRoute] string phone)
         {
             try
             {
@@ -56,12 +56,29 @@ namespace test_blazor.Server.Controllers
 
         [HttpGet]
         [Route("GetData/{phone}")]
-        public async Task<object> GetData([FromRoute]string phone)
+        public async Task<object> GetData([FromRoute] string phone)
         {
             try
             {
                 GlobalValidator.PhoneValidator(phone);
-                var data = await _IPricePrepaidService.GetData( phone);
+                var data = await _IPricePrepaidService.GetData(phone);
+                return Ok(data);
+            }
+            catch (CustomException ex)
+            {
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.ErrorHeader, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetEmoney/{type}")]
+        public async Task<object> GetEmoney([FromRoute] string type)
+        {
+            try
+            {
+                var data = await _IPricePrepaidService.GetEmoney(type.ToLower());
                 return Ok(data);
             }
             catch (CustomException ex)
@@ -74,7 +91,7 @@ namespace test_blazor.Server.Controllers
 
         [HttpGet]
         [Route("GetTokenPln/{notoken}")]
-        public async Task<object> GetPln([FromRoute]string notoken)
+        public async Task<object> GetPln([FromRoute] string notoken)
         {
             try
             {
