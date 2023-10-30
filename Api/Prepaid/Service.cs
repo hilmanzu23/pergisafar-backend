@@ -111,6 +111,77 @@ namespace RepositoryPattern.Services.PricePrepaidService
                 throw;
             }
         }
+
+        public async Task<Object> GetPln(string notoken)
+        {
+            
+            try
+            { 
+                var item = await checkCustomerPln(notoken);
+                string file = (string)item;
+                // Create filter conditions for product_type and status
+                var filter = Builders<PricePrepaid>.Filter.And(
+                    Builders<PricePrepaid>.Filter.Eq("product_type", "pln"),
+                    Builders<PricePrepaid>.Filter.Eq("status", "active")
+                );
+                // Query the MongoDB collection with the filter conditions
+                var items = await dataUser.Find(filter).ToListAsync();
+                // Filter the results based on product_code
+                var filteredProducts = items.ToList();
+                var sortedItems = filteredProducts.Select(p => new
+                {
+                    id = p.Id,
+                    product_nominal = p.product_nominal,
+                    product_code = p.product_code,
+                    product_description = p.product_description,
+                    product_details = p.product_details,
+                    product_price = Convert.ToInt32(p.product_price),
+                    product_type = p.product_type,
+                    status = p.status,
+                    icon_url = p.icon_url,
+                    product_category = p.product_category,  
+                })
+                .OrderBy(p => p.product_price)
+                .ToList();
+                return new { code = 200, data = sortedItems, message = "Data Add Complete", length = sortedItems.Count };
+            }
+            catch (CustomException)
+            {
+                throw;
+            }
+        }
+
+        public async Task<Object> checkCustomerPln(string customer)
+        {
+            var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
+            var CreateSha = new CreateSha(configuration);
+            string signature = CreateSha.md5Conv(customer);
+            var httpClient = new HttpClient();
+            var parameters = new Dictionary<string, string> 
+            {
+                { "username", username },
+                { "customer_id", customer },
+                { "sign", signature },
+            };
+            var json = JsonConvert.SerializeObject(parameters);
+            try
+            {
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await httpClient.PostAsync(endpointDev + "inquiry-pln", content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var responseObject = JsonConvert.DeserializeObject<YourResponsePln>(responseContent);
+                string rc = responseObject.data.rc;
+                if(rc != "00"){
+                    throw new CustomException(400,"Error", "data tidak ditemukan");
+                }
+                // var pricelist = awaitresponseObject.data.pricelist;
+                return responseObject.data.name;
+            }
+            catch (CustomException)
+            {
+                throw;
+            }
+        }
         public async Task<Object> RefreshData()
         {
             var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
@@ -148,7 +219,7 @@ namespace RepositoryPattern.Services.PricePrepaidService
                 }).ToList();
 
                 await dataUser.InsertManyAsync(transactionDataList);
-                return new { code = 200, message = "Berhasil" };
+                return new { code = 200, message = "Berhasil", data = transactionDataList };
             }
             catch (CustomException)
             {
@@ -161,6 +232,11 @@ namespace RepositoryPattern.Services.PricePrepaidService
             public Data data { get; set; }
         }
 
+         public class YourResponsePln
+        {
+            public ResponsePln data { get; set; }
+        }
+
         public class CheckOPT
         {
             public string message { get; set; }
@@ -171,6 +247,20 @@ namespace RepositoryPattern.Services.PricePrepaidService
         public class Data
         {
             public List<PricePrepaid> pricelist { get; set; }
+        }
+
+        public class ResponsePln
+        {
+            public string status { get; set; }
+            public string customerId { get; set; }
+            public string meterNo { get; set; }
+            public string subscriberId { get; set; }
+            public string name { get; set; }
+            public string segmentPower { get; set; }
+            public string message { get; set; }
+            public string rc { get; set; }
+
+
         }
     }
 }
