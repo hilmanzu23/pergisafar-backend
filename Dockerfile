@@ -1,15 +1,23 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
-WORKDIR /app
-EXPOSE 8080
+# Use the official .NET 6 SDK image to build the application
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 
+WORKDIR /app
+
+# Copy the .csproj and restore as distinct layers
+COPY *.csproj ./
+RUN dotnet restore
+
+# Copy the remaining source code and build the application
 COPY . ./
 RUN dotnet publish -c Release -o out
 
+# Build the runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
+
 WORKDIR /app
-COPY --from=build-env /app/out .
 
-ENV ASPNETCORE_ENVIRONMENT Production
+# Copy the published output from the build stage
+COPY --from=build /app/out .
 
+# Define the entry point for your application
 ENTRYPOINT ["dotnet", "pergisafar-web.dll"]
-
