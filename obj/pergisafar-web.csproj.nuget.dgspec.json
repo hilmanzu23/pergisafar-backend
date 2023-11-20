@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\90123259\\CodeHilmanzu\\pergisafar-web\\pergisafar-web.csproj": {}
+    "D:\\Dev\\Dev\\TravelBerkah\\Backend\\pergisafar-web.csproj": {}
   },
   "projects": {
-    "C:\\Users\\90123259\\CodeHilmanzu\\pergisafar-web\\pergisafar-web.csproj": {
+    "D:\\Dev\\Dev\\TravelBerkah\\Backend\\pergisafar-web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\90123259\\CodeHilmanzu\\pergisafar-web\\pergisafar-web.csproj",
+        "projectUniqueName": "D:\\Dev\\Dev\\TravelBerkah\\Backend\\pergisafar-web.csproj",
         "projectName": "pergisafar-web",
-        "projectPath": "C:\\Users\\90123259\\CodeHilmanzu\\pergisafar-web\\pergisafar-web.csproj",
+        "projectPath": "D:\\Dev\\Dev\\TravelBerkah\\Backend\\pergisafar-web.csproj",
         "packagesPath": "C:\\Users\\90123259\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\90123259\\CodeHilmanzu\\pergisafar-web\\obj\\",
+        "outputPath": "D:\\Dev\\Dev\\TravelBerkah\\Backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\90123259\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -86,7 +86,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.411\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.416\\RuntimeIdentifierGraph.json"
         }
       }
     }

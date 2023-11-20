@@ -19,6 +19,19 @@ public class UpdatePasswordDto
 
 }
 
+public class UpdatePinDto
+{
+    public string? Pin { get; set; }
+    public string? ConfirmPin { get; set; }
+
+}
+
+public class PinDto
+{
+    public string? Pin { get; set; }
+
+}
+
 public class OtpDto
 {
     public string? Otp { get; set; }

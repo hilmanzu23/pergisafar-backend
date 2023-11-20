@@ -97,7 +97,6 @@ namespace RepositoryPattern.Services.AuthService
                     IsVerification = false,
                     Balance = 0,
                     Point = 0,
-                    Pin = "",
                     IdRole = Roles.User,
                     CreatedAt = DateTime.Now
                 };
@@ -147,6 +146,30 @@ namespace RepositoryPattern.Services.AuthService
             catch (CustomException ex)
             {
 
+                throw;
+            }
+        }
+
+        public async Task<object> UpdatePin(string id, UpdatePinDto item)
+        {
+            try
+            {
+                var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
+                if (roleData == null)
+                {
+                    throw new CustomException(400, "Error", "Data tidak ada");
+                }
+                if (item.Pin.Length < 6)
+                {
+                    throw new CustomException(400, "Password", "Pin harus 6 karakter");
+                }
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(item.Pin);
+                roleData.Pin = hashedPassword;
+                await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
+                return new { code = 200, id = roleData.Id.ToString(), message = "Update Pin Berhasil" };
+            }
+            catch (CustomException ex)
+            {
                 throw;
             }
         }
@@ -224,6 +247,50 @@ namespace RepositoryPattern.Services.AuthService
                 roleData.IsVerification = true;
                 await dataUser.ReplaceOneAsync(x => x.Id == id, roleData);
                 return new { code = 200, id = roleData.Id.ToString(), message = "Email berhasil di verifikasi" };
+            }
+            catch (CustomException ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<object> VerifyPin(string id)
+        {
+            try
+            {
+                var roleData = await dataUser.Find(x => x.Id == id).FirstOrDefaultAsync();
+                if (roleData == null)
+                {
+                    throw new CustomException(400, "Error", "Data not found");
+                }
+                if (roleData.Pin == null)
+                {
+                    return new { code = 200, id = roleData.Id.ToString(), message = "Pin not set" };
+                }
+                return new { code = 200, id = roleData.Id.ToString(), message = "Pin sudah ada" };
+            }
+            catch (CustomException ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<Object> CheckPin([FromBody] PinDto pin, string id)
+        {
+            try
+            {
+                var user = await dataUser.Find(u => u.Id == id).FirstOrDefaultAsync();
+                if (user == null)
+                {
+                    throw new CustomException(400, "Email", "Email tidak ditemukan");
+                }
+                bool isPinCorrect = BCrypt.Net.BCrypt.Verify(pin.Pin, user.Pin);
+                if (!isPinCorrect)
+                {
+                    throw new CustomException(400, "Pin", "Pin Salah");
+                }
+                string idAsString = user.Id.ToString();
+                return new { code = 200, id = idAsString, message= "Berhasil"};
             }
             catch (CustomException ex)
             {

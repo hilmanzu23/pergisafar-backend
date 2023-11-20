@@ -105,6 +105,30 @@ namespace test_blazor.Server.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost]
+        [Route("Auth/UpdatePin")]
+        public async Task<object> UpdatePin([FromBody] UpdatePinDto item)
+        {
+            try
+            {
+                string accessToken = HttpContext.Request.Headers["Authorization"];
+                string idUser = await _ConvertJwt.ConvertString(accessToken);
+                if (item.Pin != item.ConfirmPin)
+                {
+                    throw new CustomException(400, "Pin", "Pin tidak sama");
+                }
+                var dataList = await _IAuthService.UpdatePin(idUser, item);
+                return Ok(dataList);
+            }
+            catch (CustomException ex)
+            {
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.ErrorHeader, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost]
         [Route("Auth/VerifyOtp/{id}")]
@@ -149,6 +173,46 @@ namespace test_blazor.Server.Controllers
             try
             {
                 var dataList = await _IAuthService.Aktifasi(id);
+                return Ok(dataList);
+            }
+            catch (CustomException ex)
+            {
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.ErrorHeader, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
+            }
+        }
+
+        // [Authorize]
+        [HttpGet]
+        [Route("Auth/CheckPin")]
+        public async Task<object> VerifyPin()
+        {
+            try
+            {
+                string accessToken = HttpContext.Request.Headers["Authorization"];
+                var checktoken = await _ConvertJwt.ConvertString(accessToken);
+                var dataList = await _IAuthService.VerifyPin(checktoken);
+                return Ok(dataList);
+            }
+            catch (CustomException ex)
+            {
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.ErrorHeader, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("Auth/VerifyPin")]
+        public async Task<object> CheckPin([FromBody]PinDto pin)
+        {
+            try
+            {
+                string accessToken = HttpContext.Request.Headers["Authorization"];
+                var checktoken = await _ConvertJwt.ConvertString(accessToken);
+                var dataList = await _IAuthService.CheckPin(pin, checktoken);
                 return Ok(dataList);
             }
             catch (CustomException ex)
