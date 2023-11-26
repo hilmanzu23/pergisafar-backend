@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace test_blazor.Server.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("/[controller]")]
     public class BannerController : ControllerBase

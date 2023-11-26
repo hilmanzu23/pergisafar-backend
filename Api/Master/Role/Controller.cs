@@ -6,6 +6,7 @@ using static RepositoryPattern.Services.RoleService.RoleService;
 
 namespace test_blazor.Server.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("/[controller]")]
     public class RoleController : ControllerBase

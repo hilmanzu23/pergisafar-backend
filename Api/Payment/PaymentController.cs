@@ -6,6 +6,7 @@ using static RepositoryPattern.Services.PaymentService.PaymentService;
 
 namespace test_blazor.Server.Controllers
 {
+    [Authorize]
     [ApiController]
     public class PaymentController : ControllerBase
     {

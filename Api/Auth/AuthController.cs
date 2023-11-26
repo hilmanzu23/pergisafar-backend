@@ -211,7 +211,7 @@ namespace test_blazor.Server.Controllers
             try
             {
                 string accessToken = HttpContext.Request.Headers["Authorization"];
-                var checktoken = await _ConvertJwt.ConvertString(accessToken);
+                string checktoken = await _ConvertJwt.ConvertString(accessToken);
                 var dataList = await _IAuthService.CheckPin(pin, checktoken);
                 return Ok(dataList);
             }

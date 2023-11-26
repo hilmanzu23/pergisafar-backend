@@ -5,6 +5,7 @@ using pergisafar.Shared.Models;
 
 namespace test_blazor.Server.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("User")]
     public class UsersController : ControllerBase

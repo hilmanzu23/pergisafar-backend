@@ -1,9 +1,11 @@
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryPattern.Services.PricePrepaidService;
 
 namespace test_blazor.Server.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("/[controller]")]
     public class PricePrepaidController : ControllerBase

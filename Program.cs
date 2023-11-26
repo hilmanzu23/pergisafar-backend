@@ -114,8 +114,12 @@ var app = builder.Build();
 // if (app.Environment.IsDevelopment())
 // {
 // }
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.ConfigObject.AdditionalItems.Add("persistAuthorization","true");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Blazor API V1");
+});
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

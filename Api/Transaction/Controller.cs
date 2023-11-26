@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryPattern.Services.TransactionService;
 
 namespace test_blazor.Server.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("/[controller]")]
     public class TransactionController : ControllerBase
