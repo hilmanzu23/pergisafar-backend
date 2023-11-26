@@ -162,3 +162,5 @@ D:\Dev\Dev\TravelBerkah\Backend\obj\Debug\net6.0\pergisafar-web.xml
 D:\Dev\Dev\TravelBerkah\Backend\obj\Debug\net6.0\pergisafar-web.pdb
 D:\Dev\Dev\TravelBerkah\Backend\obj\Debug\net6.0\pergisafar-web.genruntimeconfig.cache
 D:\Dev\Dev\TravelBerkah\Backend\obj\Debug\net6.0\ref\pergisafar-web.dll
+D:\Dev\Dev\TravelBerkah\Backend\bin\Debug\net6.0\Client\.prettierrc.json
+D:\Dev\Dev\TravelBerkah\Backend\bin\Debug\net6.0\Client\package.json

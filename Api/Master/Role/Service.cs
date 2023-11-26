@@ -27,6 +27,19 @@ namespace RepositoryPattern.Services.RoleService
                 throw;
             }
         }
+
+        public async Task<Object> GetById(string id)
+        {
+            try
+            {
+                var items = await dataUser.Find(_ => _.Id == id).FirstOrDefaultAsync();
+                return new { code = 200, data = items, message = "Data Add Complete" };
+            }
+            catch (CustomException)
+            {
+                throw;
+            }
+        }
         public async Task<object> Post(CreateRoleDto item)
         {
             try

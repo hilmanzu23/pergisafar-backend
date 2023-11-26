@@ -31,7 +31,7 @@ public class JwtService
                 new Claim(ClaimTypes.Name, id), // NOTE: this will be the "User.Identity.Name" value
                 new Claim(JwtRegisteredClaimNames.Sub, id),
             }),
-            Expires = DateTime.UtcNow.AddMonths(1),
+            Expires = DateTime.UtcNow.AddDays(7),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keys), SecurityAlgorithms.HmacSha256Signature),
             Issuer = "pergisafar.com",
             Audience = "pergisafar.com",

@@ -38,6 +38,22 @@ namespace test_blazor.Server.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public async Task<object> GetById([FromRoute] string id)
+        {
+            try
+            {
+                var data = await _IRoleService.GetById(id);
+                return Ok(data);
+            }
+            catch (CustomException ex)
+            {
+                int errorCode = ex.ErrorCode;
+                var errorResponse = new ErrorResponse(errorCode, ex.ErrorHeader, ex.Message);
+                return _errorUtility.HandleError(errorCode, errorResponse);
+            }
+        }
+
         // [Authorize]
         [HttpPost]
         public async Task<object> Post([FromBody] CreateRoleDto item)

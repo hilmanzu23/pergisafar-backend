@@ -107,8 +107,18 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var app = builder.Build();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", builder =>
+    {
+        builder.WithOrigins("http://localhost:5173", "https://travelberkah.web.app", "http://127.0.0.1:5173")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+    });
+});
 
+var app = builder.Build();
+app.UseCors("AllowSpecificOrigin");
 
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
