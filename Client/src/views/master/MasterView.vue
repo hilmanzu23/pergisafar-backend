@@ -3,12 +3,9 @@
       <v-card>
         <v-tabs v-model="tab" color="#61A3BA" center-active>
           <v-tab value="1">Roles</v-tab>
-          <v-tab value="2">Jenis Ikan</v-tab>
-          <v-tab value="3">Bahan</v-tab>
-          <v-tab value="4">Lokasi</v-tab>
-          <v-tab value="5">Status Stock</v-tab>
-          <v-tab value="8">Role</v-tab>
-          <v-tab value="9">Expedisi</v-tab>
+          <v-tab value="2">Status</v-tab>
+          <v-tab value="3">Pengaturan</v-tab>
+          <v-tab value="4">Banner</v-tab>
         </v-tabs>
   
         <v-card-text>
@@ -17,22 +14,13 @@
               <RolesView />
             </v-window-item>
             <v-window-item value="2">
-              <RolesView />
+              <StatusView />
             </v-window-item>
             <v-window-item value="3">
-              <RolesView />
+              <SettingView />
             </v-window-item>
             <v-window-item value="4">
-              <RolesView />
-            </v-window-item>
-            <v-window-item value="5">
-              <RolesView />
-            </v-window-item>
-            <v-window-item value="8">
-              <RolesView />
-            </v-window-item>
-            <v-window-item value="9">
-              <RolesView />
+              <BannerView />
             </v-window-item>
           </v-window>
         </v-card-text>
@@ -42,6 +30,10 @@
   
   <script>
   import RolesView from '@views/master/_RolesView.vue';
+  import StatusView from '@views/master/_StatusView.vue';
+  import SettingView from '@views/master/_SettingView.vue';
+  import BannerView from '@views/master/_BannerView.vue'
+
   
   
   export default {
@@ -50,6 +42,9 @@
     }),
     components: {
       RolesView,
+      StatusView,
+      SettingView,
+      BannerView
     },
   };
   </script>
