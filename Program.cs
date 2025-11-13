@@ -109,11 +109,11 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin", builder =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        builder.WithOrigins("http://localhost:5173", "https://apiimpact.coderchamps.co.id", "http://127.0.0.1:5173")
-                .AllowAnyMethod()
-                .AllowAnyHeader();
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
