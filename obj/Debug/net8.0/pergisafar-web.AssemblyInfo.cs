@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("pergisafar-web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+942d76f2821f6a91e1ad9e2b35ce38be61c5e2cb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6eea227c67ca0c495b6e45512b3034eadcee19d3")]
 [assembly: System.Reflection.AssemblyProductAttribute("pergisafar-web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("pergisafar-web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
