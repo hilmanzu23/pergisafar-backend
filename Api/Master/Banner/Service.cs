@@ -13,7 +13,7 @@ namespace RepositoryPattern.Services.BannerService
         public BannerService(IWebHostEnvironment environment, IConfiguration configuration)
         {
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
-            IMongoDatabase database = client.GetDatabase("testprod");
+            IMongoDatabase database = client.GetDatabase("travelberkah");
             dataUser = database.GetCollection<Banner>("banner");
             dataImage = database.GetCollection<ImageModel>("image");
             this.key = configuration.GetSection("AppSettings")["JwtKey"];

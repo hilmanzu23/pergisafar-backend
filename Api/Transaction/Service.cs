@@ -18,7 +18,7 @@ namespace RepositoryPattern.Services.TransactionService
         public TransactionService(IConfiguration configuration)
         {
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
-            IMongoDatabase database = client.GetDatabase("testprod");
+            IMongoDatabase database = client.GetDatabase("travelberkah");
             dataUser = database.GetCollection<Transaction>("transactions");
             dataType = database.GetCollection<TransactionsType>("transactionstype");
             dataStatus = database.GetCollection<Status>("status");

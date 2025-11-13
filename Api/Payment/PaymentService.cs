@@ -23,7 +23,7 @@ namespace RepositoryPattern.Services.PaymentService
         public PaymentService(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
-            IMongoDatabase database = client.GetDatabase("testprod");
+            IMongoDatabase database = client.GetDatabase("travelberkah");
             dataUser = database.GetCollection<Payment>("topupbalance");
             dataTransaksi = database.GetCollection<Transaction>("transactions");
             dataSetting = database.GetCollection<Setting>("setting");

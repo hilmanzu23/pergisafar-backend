@@ -22,7 +22,7 @@ namespace RepositoryPattern.Services.AuthService
         public AuthService(IConfiguration configuration, IEmailService emailService, ILogger<AuthService> logger)
         {
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
-            IMongoDatabase database = client.GetDatabase("testprod");
+            IMongoDatabase database = client.GetDatabase("travelberkah");
             dataUser = database.GetCollection<User>("users");
             this.key = configuration.GetSection("AppSettings")["JwtKey"];
             _emailService = emailService;

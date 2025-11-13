@@ -1,30 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Dev\\Dev\\TravelBerkah\\Backend\\pergisafar-web.csproj": {}
+    "/Users/hilmanzu/Documents/travelberkah/pergisafar-backend/pergisafar-web.csproj": {}
   },
   "projects": {
-    "D:\\Dev\\Dev\\TravelBerkah\\Backend\\pergisafar-web.csproj": {
+    "/Users/hilmanzu/Documents/travelberkah/pergisafar-backend/pergisafar-web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Dev\\Dev\\TravelBerkah\\Backend\\pergisafar-web.csproj",
+        "projectUniqueName": "/Users/hilmanzu/Documents/travelberkah/pergisafar-backend/pergisafar-web.csproj",
         "projectName": "pergisafar-web",
-        "projectPath": "D:\\Dev\\Dev\\TravelBerkah\\Backend\\pergisafar-web.csproj",
-        "packagesPath": "C:\\Users\\90123259\\.nuget\\packages\\",
-        "outputPath": "D:\\Dev\\Dev\\TravelBerkah\\Backend\\obj\\",
+        "projectPath": "/Users/hilmanzu/Documents/travelberkah/pergisafar-backend/pergisafar-web.csproj",
+        "packagesPath": "/Users/hilmanzu/.nuget/packages/",
+        "outputPath": "/Users/hilmanzu/Documents/travelberkah/pergisafar-backend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\90123259\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/hilmanzu/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net6.0"
+          "net8.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net6.0": {
-            "targetAlias": "net6.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {}
           }
         },
@@ -32,11 +32,16 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
-        "net6.0": {
-          "targetAlias": "net6.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
             "BCrypt.Net-Next": {
               "target": "Package",
@@ -86,7 +91,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.416\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.414/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

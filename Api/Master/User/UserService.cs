@@ -16,7 +16,7 @@ namespace RepositoryPattern.Services.UserService
         public UserService(IConfiguration configuration)
         {
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
-            IMongoDatabase database = client.GetDatabase("testprod");
+            IMongoDatabase database = client.GetDatabase("travelberkah");
             dataUser = database.GetCollection<User>("users");
             dataRole = database.GetCollection<Role>("roles");
 

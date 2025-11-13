@@ -20,7 +20,7 @@ namespace RepositoryPattern.Services.PricePrepaidService
         public PricePrepaidService(IConfiguration configuration)
         {
             this.client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
-            IMongoDatabase database = client.GetDatabase("testprod");
+            IMongoDatabase database = client.GetDatabase("travelberkah");
             dataUser = database.GetCollection<PricePrepaid>("priceprepaid");
             this.key = configuration.GetSection("AppSettings")["JwtKey"];
             this.username = configuration.GetSection("IAKSettings")["Username"];
@@ -273,7 +273,7 @@ namespace RepositoryPattern.Services.PricePrepaidService
             var json = JsonConvert.SerializeObject(parameters);
             try
             {
-                client.GetDatabase("testprod").DropCollection("priceprepaid");
+                client.GetDatabase("travelberkah").DropCollection("priceprepaid");
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await httpClient.PostAsync(endpointDev + "pricelist", content);
                 var responseContent = await response.Content.ReadAsStringAsync();

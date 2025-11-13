@@ -11,7 +11,7 @@ namespace RepositoryPattern.Services.StatusService
         public StatusService(IConfiguration configuration)
         {
             MongoClient client = new MongoClient(configuration.GetConnectionString("ConnectionURI"));
-            IMongoDatabase database = client.GetDatabase("testprod");
+            IMongoDatabase database = client.GetDatabase("travelberkah");
             dataUser = database.GetCollection<Status>("status");
             this.key = configuration.GetSection("AppSettings")["JwtKey"];
         }
